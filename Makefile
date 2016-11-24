@@ -11,8 +11,10 @@
 # **************************************************************************** #
 
 NAME		=		quadtree
-SRC			=		main.c 
-					
+SRC			=		main.c \
+					image_action.c \
+					quadtree_action.c \
+					quadtree_creation.c \
 					
 OBJ_NAME	=		$(SRC:.c=.o)
 OBJ_PATH	=		obj/
@@ -29,7 +31,7 @@ all: $(NAME)
 
 $(OBJ_PATH)%.o: %.c
 	@mkdir -p obj
-	gcc $(FLAGS) -c $< -o $@ $(LIB)  -I includes
+	gcc $(FLAGS) -c $< -o $@ $(LIB) 
 
 clean:
 	rm -rf $(OBJ_PATH)
