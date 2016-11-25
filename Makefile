@@ -15,6 +15,7 @@ SRC			=		main.c \
 					image_action.c \
 					quadtree_action.c \
 					quadtree_creation.c \
+					err.c \
 					
 OBJ_NAME	=		$(SRC:.c=.o)
 OBJ_PATH	=		obj/

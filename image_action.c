@@ -15,21 +15,15 @@ static int		d(int x1, int x2)
 
 void		draw_quadtree(t_qt *qt, MLV_Image *img, int x1, int x2, int y1, int y2)
 {
-/*	MLV_Color color;
-	
-	color = MLV_COLOR_BLACK;*/
 	if (!qt)
 		return ;
 	
 	if (is_leaf(qt))
 	{
-		printf("dist = %f\n", qt->dist);
 		if (x1 == x2)
 			x2++;
 		if (y1 == y2)
 			y2++;
-		/*color = get_average_color_from_image(img, x1, x2, y1, y2);
-		(void)color;*/
 		MLV_draw_filled_rectangle(x1, y1, x2 - x1, y2 - y1, qt->color);
 		return ;
 	}
