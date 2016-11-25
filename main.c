@@ -32,9 +32,8 @@ int		main(void)
 	(void)qt;
 	qt = NULL;
 	MLV_create_window("QUADTREE", "QUADTREE", TAILLE_X, TAILLE_Y);
-	img = MLV_load_image("img/mr_bean.jpg");
-	quadtree_maker(img, &qt, 100);
-	/*generate_tree_test(img, PROF, &qt, 0, TAILLE_X, 0, TAILLE_Y);*/
+	img = MLV_load_image("img/panda2.jpg");
+	quadtree_maker(img, &qt, 2000);
 	draw_quadtree(qt, img, 0, TAILLE_X, 0, TAILLE_Y);
 	MLV_actualise_window();
 	MLV_wait_mouse(0, 0);

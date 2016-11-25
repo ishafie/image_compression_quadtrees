@@ -87,48 +87,6 @@ static double	max(double a, double b)
 	return (a > b ? a : b);
 }
 
-double			worst_zone(double no, double ne, double se, double so)
-{
-	return (max(max(no, ne), max(so, se)));
-}
-
-int		generate_tree(MLV_Image *img, int max_prof, t_qt **qt, int x1, int x2, int y1, int y2)
-{	
-	if (!*qt)
-		(*qt) = create_tree();
-		(void)max_prof;
-	/*(*qt)->dist = get_error_dist(img, x1, x2, y1, y2, qt);*/
-	/*if (max_prof == 0)
-		return ;*/
-	if (!(*qt)->no)
-		(*qt)->no = create_tree();
-	if (!(*qt)->ne)
-		(*qt)->ne = create_tree();
-	if (!(*qt)->se)
-		(*qt)->se = create_tree();
-	if (!(*qt)->so)
-		(*qt)->so = create_tree();
-	(*qt)->no->dist = get_error_dist(img, x1, d(x1, x2), y1, d(y1, y2), qt);
-	(*qt)->ne->dist = get_error_dist(img, d(x1, x2), x2, y1, d(y1, y2), qt);
-	(*qt)->se->dist = get_error_dist(img, d(x1, x2), x2, d(y1, y2), y2, qt);
-	(*qt)->so->dist = get_error_dist(img, x1, d(x1, x2), d(y1, y2), y2, qt);
-	return (worst_zone((*qt)->no->dist, (*qt)->ne->dist, (*qt)->se->dist, (*qt)->so->dist));
-/*	if ((*qt)->no->dist == best)
-		generate_tree(img, max_prof - 1, &(*qt)->no, x1, d(x1, x2), y1, d(y1, y2));
-	else if ((*qt)->ne->dist == best)
-		generate_tree(img, max_prof - 1, &(*qt)->ne, d(x1, x2), x2, y1, d(y1, y2));
-	else if ((*qt)->se->dist == best)
-		generate_tree(img, max_prof - 1, &(*qt)->se, d(x1, x2), x2, d(y1, y2), y2);
-	else if ((*qt)->so->dist == best)
-		generate_tree(img, max_prof - 1, &(*qt)->so, x1, d(x1, x2), d(y1, y2), y2);*/
-	/*	
-	generate_tree(img, max_prof - 1, &(*qt)->no, x1, d(x1, x2), y1, d(y1, y2));
-	generate_tree(img, max_prof - 1, &(*qt)->ne, d(x1, x2), x2, y1, d(y1, y2));
-	generate_tree(img, max_prof - 1, &(*qt)->se, d(x1, x2), x2, d(y1, y2), y2);
-	generate_tree(img, max_prof - 1, &(*qt)->so, x1, d(x1, x2), d(y1, y2), y2);
-	* */
-}
-
 void		gen_tree(MLV_Image *img, t_qt **qt, int x1, int x2, int y1, int y2)
 {
 	if (!(*qt))
@@ -188,19 +146,7 @@ void	quadtree_maker(MLV_Image *img, t_qt **qt, int operations)
 	while (i < operations)
 	{
 		worst = find_worst(*qt, (*qt)->dist);
-		/*printf("worst = %f\n", worst);*/
 		go_to_worst(img, worst, qt, 0, TAILLE_X, 0, TAILLE_Y);
 		i++;
 	}
 }
-
-/*void	parcours_tree(MLV_Image *img, int max_prof, t_qt **qt, int x1, int x2, int y1, int y2)
-{
-	int	worst;
-	
-	worst = -1;
-	(void)worst;
-	if (!(*qt))
-		worst = generate_tree(img, max_prof, qt, x1, x2, y1, y2);
-	find_worst(*qt, (*qt)->dist);
-}*/
