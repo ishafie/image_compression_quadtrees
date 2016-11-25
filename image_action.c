@@ -20,8 +20,10 @@ void		draw_quadtree(t_qt *qt, MLV_Image *img, int x1, int x2, int y1, int y2)
 	color = MLV_COLOR_BLACK;*/
 	if (!qt)
 		return ;
+	
 	if (is_leaf(qt))
 	{
+		printf("dist = %f\n", qt->dist);
 		if (x1 == x2)
 			x2++;
 		if (y1 == y2)
@@ -31,7 +33,7 @@ void		draw_quadtree(t_qt *qt, MLV_Image *img, int x1, int x2, int y1, int y2)
 		MLV_draw_filled_rectangle(x1, y1, x2 - x1, y2 - y1, qt->color);
 		return ;
 	}
-	printf("dist = %f\n", qt->dist);
+	
 	draw_quadtree(qt->no, img, x1, d(x1, x2), y1, d(y1, y2));
 	draw_quadtree(qt->ne, img, d(x1, x2), x2, y1, d(y1, y2));
 	draw_quadtree(qt->se, img, d(x1, x2), x2, d(y1, y2), y2);

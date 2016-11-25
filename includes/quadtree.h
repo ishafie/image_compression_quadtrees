@@ -3,7 +3,7 @@
 
 # define TAILLE_X 512
 # define TAILLE_Y 512
-# define PROF 3
+# define PROF 2
 
 # include <stdio.h>
 # include <stdlib.h>
@@ -29,9 +29,12 @@ typedef struct			s_quadtree
 }						t_qt;
 
 void		malloc_handling();
+void	generate_tree_test(MLV_Image *img, int max_prof, t_qt **qt, int x1, int x2, int y1, int y2);
+double		find_worst(t_qt *qt, double worst);
+double		get_error_dist(MLV_Image *img, int x1, int x2, int y1, int y2, t_qt **qt);
 MLV_Color	get_average_color_from_image(MLV_Image *img, int x1, int x2, int y1, int y2);
 t_color		get_average_rgba_from_image(MLV_Image *img, int x1, int x2, int y1, int y2);
-void 		generate_tree(MLV_Image *img, int max_prof, t_qt **qt, int x1, int x2, int y1, int y2);
+int		generate_tree(MLV_Image *img, int max_prof, t_qt **qt, int x1, int x2, int y1, int y2);
 int			is_leaf(t_qt *qt);
 void		draw_quadtree(t_qt *qt, MLV_Image *img, int x1, int x2, int y1, int y2);
 

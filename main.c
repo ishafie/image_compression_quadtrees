@@ -33,8 +33,9 @@ int		main(void)
 	qt = NULL;
 	MLV_create_window("QUADTREE", "QUADTREE", TAILLE_X, TAILLE_Y);
 	img = MLV_load_image("img/mr_bean.jpg");
-	generate_tree(img, PROF, &qt, 0, TAILLE_X, 0, TAILLE_Y);
+	generate_tree_test(img, PROF, &qt, 0, TAILLE_X, 0, TAILLE_Y);
 	draw_quadtree(qt, img, 0, TAILLE_X, 0, TAILLE_Y);
+	printf("%f\n", find_worst(qt, qt->dist));
 	MLV_actualise_window();
 	MLV_wait_mouse(0, 0);
 	/*test_color();
