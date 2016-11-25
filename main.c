@@ -1,6 +1,6 @@
 #include "includes/quadtree.h"
 
-void test_color(void)
+void	test_color(void)
 {
 	MLV_Image *img;
 	MLV_Color color;
@@ -24,11 +24,11 @@ void test_color(void)
 	}
 }
 
-int	main(void)
+int		main(void)
 {
 	t_qt	*qt;
 	MLV_Image *img;
-	
+
 	(void)qt;
 	qt = NULL;
 	MLV_create_window("QUADTREE", "QUADTREE", TAILLE_X, TAILLE_Y);

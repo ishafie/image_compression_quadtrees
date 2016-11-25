@@ -20,7 +20,7 @@ OBJ_NAME	=		$(SRC:.c=.o)
 OBJ_PATH	=		obj/
 OBJ			=		$(addprefix $(OBJ_PATH), $(OBJ_NAME))
 FLAGS		=		-Wall -Wextra -Werror --ansi --pedantic 
-LIB			=		-lMLV 
+LIB			=		-lMLV -lm
 
 .PHONY: all, clean, fclean, re
 
