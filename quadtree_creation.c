@@ -147,6 +147,13 @@ void	quadtree_maker(MLV_Image *img, t_qt **qt, int operations)
 	{
 		worst = find_worst(*qt, (*qt)->dist);
 		go_to_worst(img, worst, qt, 0, TAILLE_X, 0, TAILLE_Y);
+		if (DISPLAY == TRUE)
+		{
+			MLV_clear_window(MLV_COLOR_BLACK);
+			draw_quadtree(*qt, img, 0, TAILLE_X, 0, TAILLE_Y);
+			MLV_actualise_window();
+		}
+
 		i++;
 	}
 }

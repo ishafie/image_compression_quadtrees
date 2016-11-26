@@ -3,7 +3,9 @@
 
 # define TAILLE_X 512
 # define TAILLE_Y 512
-# define PROF 2
+# define OP 4000
+# define DISPLAY 0
+# define TRUE 1
 
 # include <stdio.h>
 # include <stdlib.h>
