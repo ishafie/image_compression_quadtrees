@@ -1,9 +1,10 @@
 #ifndef QUADTREE_H
 # define QUADTREE_H
 
+# define PERTE 6
 # define TAILLE_X 512
 # define TAILLE_Y 512
-# define OP 4000
+# define OP 10
 # define DISPLAY 0
 # define TRUE 1
 
@@ -33,7 +34,18 @@ typedef struct			s_quadtree
 void		malloc_handling();
 void		err_what(int err);
 
+double		dist(t_color px, t_color moy);
+t_qt		*create_tree(void);
+void	MLV_Color_to_color(MLV_Color x, t_color *x_c);
+int		count_node(t_qt *qt);
+double	max(double a, double b);
+int		get_prof(t_qt *qt, int prof);
+void	minimise_prof(t_qt **qt, int nb_color, int max_prof);
+
 void		quadtree_maker(MLV_Image *img, t_qt **qt, int operations);
+void		print_every_color_equal(t_qt **qt, t_qt **tmp, MLV_Color, int *nb_color);
+void		check_every_color_doublon(t_qt **qt, t_qt **tmp, int *nb_color);
+void		print_color(MLV_Color x);
 
 void		generate_tree_test(MLV_Image *img, int max_prof, t_qt **qt, int x1, int x2, int y1, int y2);
 double		find_worst(t_qt *qt, double worst);
@@ -43,6 +55,8 @@ t_color		get_average_rgba_from_image(MLV_Image *img, int x1, int x2, int y1, int
 int			generate_tree(MLV_Image *img, int max_prof, t_qt **qt, int x1, int x2, int y1, int y2);
 int			is_leaf(t_qt *qt);
 void		draw_quadtree(t_qt *qt, MLV_Image *img, int x1, int x2, int y1, int y2);
-
+int		color_equal(MLV_Color x, MLV_Color y, int perte);
+void	find_tree_min_dist(t_qt **qt, t_qt **paire);
+void	minimise_perte(t_qt **racine, t_qt **qt);
 
 #endif
