@@ -28,15 +28,20 @@ int		main(void)
 {
 	t_qt	*qt;
 	MLV_Image *img;
-
-	(void)qt;
+	int		nb_color;
+	
+	nb_color = 0;
 	qt = NULL;
 	MLV_create_window("QUADTREE", "QUADTREE", TAILLE_X, TAILLE_Y);
-	img = MLV_load_image("img/panda2.jpg");
+	img = MLV_load_image("img/einstein.bmp");
 	quadtree_maker(img, &qt, OP);
+	check_every_color_doublon(&qt, &qt, &nb_color);
+	/*printf("nb of colors = %d\n", nb_color);*/
 	draw_quadtree(qt, img, 0, TAILLE_X, 0, TAILLE_Y);
+	minimise_perte(&qt, &qt);
 	MLV_actualise_window();
 	MLV_wait_mouse(0, 0);
+
 	/*test_color();
 	MLV_actualise_window();
 	MLV_wait_mouse(0, 0);*/

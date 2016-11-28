@@ -82,7 +82,7 @@ double		get_error_dist(MLV_Image *img, int x1, int x2, int y1, int y2, t_qt **qt
 	return (distance);
 }
 
-static double	max(double a, double b)
+double	max(double a, double b)
 {
 	return (a > b ? a : b);
 }

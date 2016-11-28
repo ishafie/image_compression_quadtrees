@@ -1,11 +1,66 @@
 #include "includes/quadtree.h"
 
+void	MLV_Color_to_color(MLV_Color x, t_color *x_c)
+{
+	uint8_t x_r, x_g, x_b, x_a;
+	
+	MLV_convert_color_to_rgba(x, &x_r, &x_g, &x_b, &x_a);
+	(*x_c).red = x_r;
+	(*x_c).green = x_g;
+	(*x_c).blue = x_b;
+	(*x_c).alpha = x_a;
+}
+
 void	init_color(t_color *ret)
 {	
 	(*ret).red = 0;
 	(*ret).green = 0;
 	(*ret).blue = 0;
 	(*ret).alpha = 0;
+}
+
+int		c_cmp(uint8_t a, uint8_t b, int perte)
+{
+	if (a == b || (a > b && a < b + perte) || (a < b && a > b - perte))
+		return (1);
+	return (0);
+}
+
+int		color_equal(MLV_Color x, MLV_Color y, int perte)
+{
+	uint8_t x_r, x_g, x_b, x_a;
+	uint8_t y_r, y_g, y_b, y_a;
+	
+	MLV_convert_color_to_rgba(x, &x_r, &x_g, &x_b, &x_a);
+	MLV_convert_color_to_rgba(y, &y_r, &y_g, &y_b, &y_a);
+	if (c_cmp(x_r, y_r, perte) && c_cmp(x_g, y_g, perte) && c_cmp(x_b, y_b, perte) && c_cmp(x_a, y_a, perte))
+		return (1);
+	return (0);
+}
+
+void	print_color(MLV_Color x)
+{
+	uint8_t x_r, x_g, x_b, x_a;
+	
+	MLV_convert_color_to_rgba(x, &x_r, &x_g, &x_b, &x_a);
+	printf("rgb(%d, %d, %d)\n", x_r, x_g, x_b);
+}
+
+void	print_every_color_equal(t_qt **qt, t_qt **tmp, MLV_Color x, int *nb_color)
+{	
+	if (!qt || !(*qt))
+		return ;
+	if (is_leaf(*qt) && x != (*qt)->color && color_equal(x, (*qt)->color, 6))
+	{
+		*nb_color -= 1;
+		free(*qt);
+		*qt = *tmp;
+		return ;
+	}
+	print_every_color_equal(&((*qt)->no), tmp, x, nb_color);
+	print_every_color_equal(&((*qt)->ne), tmp, x, nb_color);
+	print_every_color_equal(&((*qt)->se), tmp, x, nb_color);
+	print_every_color_equal(&((*qt)->so), tmp, x, nb_color);
 }
 
 static int		d(int x1, int x2)
@@ -17,7 +72,6 @@ void		draw_quadtree(t_qt *qt, MLV_Image *img, int x1, int x2, int y1, int y2)
 {
 	if (!qt)
 		return ;
-	
 	if (is_leaf(qt))
 	{
 		if (x1 == x2)
