@@ -28,17 +28,18 @@ int		main(void)
 {
 	t_qt	*qt;
 	MLV_Image *img;
-	int		nb_color;
+/*	int		nb_color;
 	
-	nb_color = 0;
+	nb_color = 0;*/
 	qt = NULL;
 	MLV_create_window("QUADTREE", "QUADTREE", TAILLE_X, TAILLE_Y);
-	img = MLV_load_image("img/einstein.bmp");
+	img = MLV_load_image("img/lion.png");
 	quadtree_maker(img, &qt, OP);
-	check_every_color_doublon(&qt, &qt, &nb_color);
+	/*check_every_color_doublon(&qt, &qt, &nb_color);*/
 	/*printf("nb of colors = %d\n", nb_color);*/
 	draw_quadtree(qt, img, 0, TAILLE_X, 0, TAILLE_Y);
-	minimise_perte(&qt, &qt);
+	MLV_actualise_window();
+	minimise_perte(img, &qt, &qt);
 	MLV_actualise_window();
 	MLV_wait_mouse(0, 0);
 

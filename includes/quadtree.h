@@ -4,7 +4,7 @@
 # define PERTE 6
 # define TAILLE_X 512
 # define TAILLE_Y 512
-# define OP 10
+# define OP 1000
 # define DISPLAY 0
 # define TRUE 1
 
@@ -34,6 +34,8 @@ typedef struct			s_quadtree
 void		malloc_handling();
 void		err_what(int err);
 
+int		cmp_tree(t_qt **qt, t_qt **paire);
+
 double		dist(t_color px, t_color moy);
 t_qt		*create_tree(void);
 void	MLV_Color_to_color(MLV_Color x, t_color *x_c);
@@ -56,7 +58,7 @@ int			generate_tree(MLV_Image *img, int max_prof, t_qt **qt, int x1, int x2, int
 int			is_leaf(t_qt *qt);
 void		draw_quadtree(t_qt *qt, MLV_Image *img, int x1, int x2, int y1, int y2);
 int		color_equal(MLV_Color x, MLV_Color y, int perte);
-void	find_tree_min_dist(t_qt **qt, t_qt **paire);
-void	minimise_perte(t_qt **racine, t_qt **qt);
+void	find_tree_min_dist(MLV_Image *img, t_qt **qt, t_qt **paire);
+void	minimise_perte(MLV_Image *img, t_qt **racine, t_qt **qt);
 
 #endif
