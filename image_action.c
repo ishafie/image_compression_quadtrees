@@ -38,6 +38,16 @@ int		color_equal(MLV_Color x, MLV_Color y, int perte)
 	return (0);
 }
 
+int		color_diff(MLV_Color x, MLV_Color y)
+{
+	uint8_t x_r, x_g, x_b, x_a;
+	uint8_t y_r, y_g, y_b, y_a;
+	
+	MLV_convert_color_to_rgba(x, &x_r, &x_g, &x_b, &x_a);
+	MLV_convert_color_to_rgba(y, &y_r, &y_g, &y_b, &y_a);
+	return (abs(x_r - y_r + x_g - y_g + x_b - y_b + x_a - y_a));
+}
+
 void	print_color(MLV_Color x)
 {
 	uint8_t x_r, x_g, x_b, x_a;
@@ -78,8 +88,8 @@ void		draw_quadtree(t_qt *qt, MLV_Image *img, int x1, int x2, int y1, int y2)
 			x2++;
 		if (y1 == y2)
 			y2++;
-		MLV_draw_filled_circle(x1 + (x2 - x1)/2, y1 + (y2 - y1)/2, (x2 - x1)/2, qt->color);
-		/*MLV_draw_filled_rectangle(x1, y1, x2 - x1, y2 - y1, qt->color);*/
+		/*MLV_draw_filled_circle(x1 + (x2 - x1)/2, y1 + (y2 - y1)/2, (x2 - x1)/2, qt->color);*/
+		MLV_draw_filled_rectangle(x1, y1, x2 - x1, y2 - y1, qt->color);
 		return ;
 	}
 	

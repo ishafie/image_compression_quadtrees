@@ -16,11 +16,12 @@ SRC			=		main.c \
 					quadtree_action.c \
 					quadtree_creation.c \
 					err.c \
+					distance.c 
 					
 OBJ_NAME	=		$(SRC:.c=.o)
 OBJ_PATH	=		obj/
 OBJ			=		$(addprefix $(OBJ_PATH), $(OBJ_NAME))
-FLAGS		=		-Wall -Wextra -Werror --ansi --pedantic 
+FLAGS		=		-Wall -Wextra -Werror --ansi --pedantic  -g
 LIB			=		-lMLV -lm
 
 .PHONY: all, clean, fclean, re
