@@ -93,29 +93,34 @@ void	free_tree(t_qt **qt)
 	free_tree(&(*qt)->ne);
 	free_tree(&(*qt)->se);
 	free_tree(&(*qt)->so);
-	/*free(*qt);*/
+	if (*qt)
+		free(*qt);
 	*qt = NULL;
 }
 
-void	delete_pair_tree_and_relink(t_qt **relink, t_qt **paire)
+void	delete_pair_tree_and_relink(MLV_Image *img, t_qt **relink, t_qt **paire)
 {
 	if (!*paire || !*relink || *paire == *relink)
 	{
 		printf("Echec\n");
 		return ;
 	}
-	if ((*paire)->no)
-		free((*paire)->no);
-	if ((*paire)->ne)
-		free((*paire)->ne);
-	if ((*paire)->se)
-		free((*paire)->se);
-	if ((*paire)->so)
-		free((*paire)->so);
-	(*paire)->no = (*relink)->no;
-	(*paire)->ne = (*relink)->ne;
-	(*paire)->se = (*relink)->se;
-	(*paire)->so = (*relink)->so;
+	(void)img;
+	/*MLV_clear_window(MLV_COLOR_BLACK);
+	draw_quadtree(*paire, img, 0, TAILLE_X, 0, TAILLE_Y);
+	MLV_actualise_window();
+	MLV_wait_mouse(0, 0);
+	
+	MLV_clear_window(MLV_COLOR_BLACK);
+	draw_quadtree(*relink, img, 0, TAILLE_X, 0, TAILLE_Y);
+	MLV_actualise_window();
+	MLV_wait_mouse(0, 0);
+	MLV_clear_window(MLV_COLOR_BLACK);
+	draw_quadtree(g_test, img, 0, TAILLE_X, 0, TAILLE_Y);
+	MLV_actualise_window();
+	*/
+	free_tree(paire);
+	(*paire) = (*relink);
 }
 
 int		min(int a, int b)
@@ -141,33 +146,42 @@ void	print_colordiff(t_qt *a, t_qt *racine)
 void	go_to_low_colordiff(MLV_Image *img, t_qt **racine, t_qt **qt)
 {
 	print_colordiff(*qt, *racine);
-	if (*racine && *qt && (*qt)->no && (*qt)->no != *racine && color_diff((*qt)->no->color, (*racine)->color) < 30)
+	if (*racine && *qt && (*qt)->no && (*qt)->no != *racine && color_diff((*qt)->no->color, (*racine)->color) < 45)
 	{
 		printf("PAIRE NO\n");
 		minimise_perte_hub(img, racine, &((*qt)->no));
 	}
-	if (*racine && *qt && (*qt)->ne && (*qt)->ne != *racine && color_diff((*qt)->ne->color, (*racine)->color) < 30)
+	if (*racine && *qt && (*qt)->ne && (*qt)->ne != *racine && color_diff((*qt)->ne->color, (*racine)->color) < 45)
 	{
 		printf("PAIRE NE\n");
 		minimise_perte_hub(img, racine, &((*qt)->ne));
 	}
-	if (*racine && *qt && (*qt)->se && (*qt)->se != *racine && color_diff((*qt)->se->color, (*racine)->color) < 30)
+	if (*racine && *qt && (*qt)->se && (*qt)->se != *racine && color_diff((*qt)->se->color, (*racine)->color) < 45)
 	{
 		printf("PAIRE SE\n");
 		minimise_perte_hub(img, racine, &((*qt)->se));
 	}
-	if (*racine && *qt && (*qt)->so && (*qt)->so != *racine && color_diff((*qt)->so->color, (*racine)->color) < 30)
+	if (*racine && *qt && (*qt)->so && (*qt)->so != *racine && color_diff((*qt)->so->color, (*racine)->color) < 45)
 	{
 		printf("PAIRE SO\n");
 		minimise_perte_hub(img, racine, &((*qt)->so));
 	}
 }
 
-void	check_dist_and_relink(t_qt **racine, t_qt **qt, double dist)
+int		is_part_of(t_qt *a, t_qt *b)
 {
-	if (dist >= 30)
+	if (!a)
+		return (0);
+	if (a == b)
+		return (1);
+	return (is_part_of(a->no, b) + is_part_of(a->ne, b) + is_part_of(a->se, b) + is_part_of(a->so, b));
+}
+
+void	check_dist_and_relink(MLV_Image *img, t_qt **racine, t_qt **qt, double dist)
+{
+	if (dist >= 30 || is_part_of(*qt, *racine) || is_part_of(*racine, *qt))
 		return ;
-	delete_pair_tree_and_relink(racine, qt);
+	delete_pair_tree_and_relink(img, racine, qt);
 }
 
 void	minimise_perte_hub(MLV_Image *img, t_qt **racine, t_qt **qt)
@@ -183,7 +197,7 @@ void	minimise_perte_hub(MLV_Image *img, t_qt **racine, t_qt **qt)
 		dist = get_dist_final(racine, qt);
 		printf("dist = %f\n", dist);
 		MLV_actualise_window();
-		check_dist_and_relink(racine, qt, dist);
+		check_dist_and_relink(img, racine, qt, dist);
 		if (dist < 30)
 		{
 			MLV_wait_mouse(0, 0);
@@ -209,4 +223,3 @@ void	minimise_perte(MLV_Image *img, t_qt **racine, t_qt **qt)
 	printf("RACINE SO\n");
 	minimise_perte(img, &((*racine)->so), qt);
 }
-                                                                                                     

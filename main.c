@@ -28,24 +28,44 @@ int		main(void)
 {
 	t_qt	*qt;
 	MLV_Image *img;
-	int		nb_color;
+	/*int		nb_color;
 	
-	nb_color = 0;
+	nb_color = 0;*/
 	qt = NULL;
 	MLV_create_window("QUADTREE", "QUADTREE", TAILLE_X, TAILLE_Y);
 	img = MLV_load_image("img/lion.png");
 	quadtree_maker(img, &qt, OP);
-	check_every_color_doublon(&qt, &qt, &nb_color);
+	/*check_every_color_doublon(&qt, &qt, &nb_color);*/
 	/*printf("nb of colors = %d\n", nb_color);*/
 	draw_quadtree(qt, img, 0, TAILLE_X, 0, TAILLE_Y);
 	MLV_actualise_window();
 	g_test = qt;
-	minimise_perte(img, &qt, &qt);
+	minimise_perte(img, &(qt->no), &(qt->ne));
+	minimise_perte(img, &(qt->no), &(qt->se));
+	minimise_perte(img, &(qt->no), &(qt->so));
+	
+	minimise_perte(img, &(qt->ne), &(qt->no));
+	minimise_perte(img, &(qt->ne), &(qt->se));
+	minimise_perte(img, &(qt->ne), &(qt->so));
+	
+	minimise_perte(img, &(qt->se), &(qt->no));
+	minimise_perte(img, &(qt->se), &(qt->ne));
+	minimise_perte(img, &(qt->se), &(qt->so));
+	
+	minimise_perte(img, &(qt->so), &(qt->no));
+	minimise_perte(img, &(qt->so), &(qt->ne));
+	minimise_perte(img, &(qt->so), &(qt->se));
+	
+	
+	MLV_wait_mouse(0, 0);
+	MLV_clear_window(MLV_COLOR_BLACK);
+	draw_quadtree(qt, img, 0, TAILLE_X, 0, TAILLE_Y);
 	MLV_actualise_window();
 	MLV_wait_mouse(0, 0);
 
 	/*test_color();
 	MLV_actualise_window();
 	MLV_wait_mouse(0, 0);*/
+	MLV_free_window();
 	return (0);
 }

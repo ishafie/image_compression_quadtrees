@@ -81,13 +81,15 @@ int		is_no_leaf(t_qt *a)
 {
 	if (!a)
 		return (0);
-	return (1 + is_no_leaf(a->no) + is_no_leaf(a->ne) + is_no_leaf(a->se) + is_no_leaf(a->so));
+	if (!is_leaf(a->no) || !is_leaf(a->ne) || !is_leaf(a->se) || !is_leaf(a->so))
+		return (1);
+	return (0);
 }
 
 double	get_dist_final(t_qt **a, t_qt **b)
 {
-	if (is_no_leaf(*a) > 1 || is_no_leaf(*b) > 1)
-		return (10000);
+	/*if (!is_no_leaf(*a) || !is_no_leaf(*b))
+		return (10000);*/
 	if (is_leaf(*a) && is_leaf(*b))
 		return (get_dist((*a)->color, (*b)->color));
 	else if (is_leaf(*a) && !is_leaf(*b))

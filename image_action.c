@@ -21,7 +21,7 @@ void	init_color(t_color *ret)
 
 int		c_cmp(uint8_t a, uint8_t b, int perte)
 {
-	if (a == b || (a > b && a < b + perte) || (a < b && a > b - perte))
+	if (a == b || (a > b - perte && a < b + perte) || (a < b + perte && a > b - perte))
 		return (1);
 	return (0);
 }
@@ -88,8 +88,8 @@ void		draw_quadtree(t_qt *qt, MLV_Image *img, int x1, int x2, int y1, int y2)
 			x2++;
 		if (y1 == y2)
 			y2++;
-		/*MLV_draw_filled_circle(x1 + (x2 - x1)/2, y1 + (y2 - y1)/2, (x2 - x1)/2, qt->color);*/
-		MLV_draw_filled_rectangle(x1, y1, x2 - x1, y2 - y1, qt->color);
+		MLV_draw_filled_circle(x1 + (x2 - x1)/2, y1 + (y2 - y1)/2, (x2 - x1)/2, qt->color);
+		/*MLV_draw_filled_rectangle(x1, y1, x2 - x1, y2 - y1, qt->color);*/
 		return ;
 	}
 	
