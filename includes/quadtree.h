@@ -4,7 +4,7 @@
 # define PERTE 6
 # define TAILLE_X 512
 # define TAILLE_Y 512
-# define OP 10
+# define OP 100
 # define DISPLAY 0
 # define TRUE 1
 
@@ -69,5 +69,6 @@ void	minimise_perte_hub(MLV_Image *img, t_qt **racine, t_qt **qt);
 double	get_dist_final(t_qt **a, t_qt **b);
 int		is_no_leaf(t_qt *a);
 void	free_tree(t_qt **qt);
+int		is_part_of(t_qt *a, t_qt *b);
 
 #endif

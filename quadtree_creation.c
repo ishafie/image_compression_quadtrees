@@ -12,7 +12,7 @@ t_qt		*create_tree(void)
 	new_qt->se = NULL;
 	new_qt->so = NULL;
 	new_qt->dist = -1;
-	new_qt->color = MLV_COLOR_BLACK;
+	new_qt->color = MLV_COLOR_BLUE;
 	return (new_qt);
 }
 

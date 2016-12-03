@@ -98,31 +98,6 @@ void	free_tree(t_qt **qt)
 	*qt = NULL;
 }
 
-void	delete_pair_tree_and_relink(MLV_Image *img, t_qt **relink, t_qt **paire)
-{
-	if (!*paire || !*relink || *paire == *relink)
-	{
-		printf("Echec\n");
-		return ;
-	}
-	(void)img;
-	/*MLV_clear_window(MLV_COLOR_BLACK);
-	draw_quadtree(*paire, img, 0, TAILLE_X, 0, TAILLE_Y);
-	MLV_actualise_window();
-	MLV_wait_mouse(0, 0);
-	
-	MLV_clear_window(MLV_COLOR_BLACK);
-	draw_quadtree(*relink, img, 0, TAILLE_X, 0, TAILLE_Y);
-	MLV_actualise_window();
-	MLV_wait_mouse(0, 0);
-	MLV_clear_window(MLV_COLOR_BLACK);
-	draw_quadtree(g_test, img, 0, TAILLE_X, 0, TAILLE_Y);
-	MLV_actualise_window();
-	*/
-	free_tree(paire);
-	(*paire) = (*relink);
-}
-
 int		min(int a, int b)
 {
 	return (a < b ? a : b);
@@ -171,17 +146,44 @@ void	go_to_low_colordiff(MLV_Image *img, t_qt **racine, t_qt **qt)
 int		is_part_of(t_qt *a, t_qt *b)
 {
 	if (!a)
+	{
+		printf("x\n");
 		return (0);
+	}
+	printf("a = %p -> b = %p | ", (void*)a, (void*)b);
 	if (a == b)
 		return (1);
 	return (is_part_of(a->no, b) + is_part_of(a->ne, b) + is_part_of(a->se, b) + is_part_of(a->so, b));
 }
 
+void	delete_pair_tree_and_relink(MLV_Image *img, t_qt **relink, t_qt **paire, int boolrelink)
+{
+	if (!*paire || !*relink || *paire == *relink)
+	{
+		printf("Echec\n");
+		return ;
+	}
+	(void)img;
+	(void)boolrelink;
+	print_color((*paire)->color);
+	free_tree(paire);
+	paire = relink;
+	print_color((*paire)->color);
+}
+
 void	check_dist_and_relink(MLV_Image *img, t_qt **racine, t_qt **qt, double dist)
 {
-	if (dist >= 30 || is_part_of(*qt, *racine) || is_part_of(*racine, *qt))
+	int	relink;
+	int	test1;
+	
+	relink = 1;
+	if (dist >= 30)
 		return ;
-	delete_pair_tree_and_relink(img, racine, qt);
+	test1 = is_part_of(*qt, *racine) || is_part_of(*racine, *qt);
+	printf("test1 = %d\n", test1);
+	if (test1)
+		relink = 0;
+	delete_pair_tree_and_relink(img, racine, qt, relink);
 }
 
 void	minimise_perte_hub(MLV_Image *img, t_qt **racine, t_qt **qt)
