@@ -4,7 +4,7 @@
 # define PERTE 6
 # define TAILLE_X 512
 # define TAILLE_Y 512
-# define OP 100
+# define OP 1000
 # define DISPLAY 0
 # define TRUE 1
 

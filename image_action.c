@@ -3,7 +3,7 @@
 void	MLV_Color_to_color(MLV_Color x, t_color *x_c)
 {
 	uint8_t x_r, x_g, x_b, x_a;
-	
+
 	MLV_convert_color_to_rgba(x, &x_r, &x_g, &x_b, &x_a);
 	(*x_c).red = x_r;
 	(*x_c).green = x_g;
@@ -12,7 +12,7 @@ void	MLV_Color_to_color(MLV_Color x, t_color *x_c)
 }
 
 void	init_color(t_color *ret)
-{	
+{
 	(*ret).red = 0;
 	(*ret).green = 0;
 	(*ret).blue = 0;
@@ -30,7 +30,7 @@ int		color_equal(MLV_Color x, MLV_Color y, int perte)
 {
 	uint8_t x_r, x_g, x_b, x_a;
 	uint8_t y_r, y_g, y_b, y_a;
-	
+
 	MLV_convert_color_to_rgba(x, &x_r, &x_g, &x_b, &x_a);
 	MLV_convert_color_to_rgba(y, &y_r, &y_g, &y_b, &y_a);
 	if (c_cmp(x_r, y_r, perte) && c_cmp(x_g, y_g, perte) && c_cmp(x_b, y_b, perte) && c_cmp(x_a, y_a, perte))
@@ -42,7 +42,7 @@ int		color_diff(MLV_Color x, MLV_Color y)
 {
 	uint8_t x_r, x_g, x_b, x_a;
 	uint8_t y_r, y_g, y_b, y_a;
-	
+
 	MLV_convert_color_to_rgba(x, &x_r, &x_g, &x_b, &x_a);
 	MLV_convert_color_to_rgba(y, &y_r, &y_g, &y_b, &y_a);
 	return (abs(x_r - y_r + x_g - y_g + x_b - y_b + x_a - y_a));
@@ -51,13 +51,13 @@ int		color_diff(MLV_Color x, MLV_Color y)
 void	print_color(MLV_Color x)
 {
 	uint8_t x_r, x_g, x_b, x_a;
-	
+
 	MLV_convert_color_to_rgba(x, &x_r, &x_g, &x_b, &x_a);
 	printf("rgb(%d, %d, %d)\n", x_r, x_g, x_b);
 }
 
 void	print_every_color_equal(t_qt **qt, t_qt **tmp, MLV_Color x, int *nb_color)
-{	
+{
 	if (!qt || !(*qt))
 		return ;
 	if (is_leaf(*qt) && x != (*qt)->color && color_equal(x, (*qt)->color, 6))
@@ -92,12 +92,12 @@ void		draw_quadtree(t_qt *qt, MLV_Image *img, int x1, int x2, int y1, int y2)
 		/*MLV_draw_filled_rectangle(x1, y1, x2 - x1, y2 - y1, qt->color);*/
 		return ;
 	}
-	
+
 	draw_quadtree(qt->no, img, x1, d(x1, x2), y1, d(y1, y2));
 	draw_quadtree(qt->ne, img, d(x1, x2), x2, y1, d(y1, y2));
 	draw_quadtree(qt->se, img, d(x1, x2), x2, d(y1, y2), y2);
 	draw_quadtree(qt->so, img, x1, d(x1, x2), d(y1, y2), y2);
-	
+
 }
 
 MLV_Color	get_average_color_from_image(MLV_Image *img, int x1, int x2, int y1, int y2)
@@ -106,7 +106,7 @@ MLV_Color	get_average_color_from_image(MLV_Image *img, int x1, int x2, int y1, i
 	t_color		moy;
 	int			save_x1;
 	int			nb_px;
-	
+
 	nb_px = 0;
 	save_x1 = x1;
 	init_color(&color);
@@ -148,7 +148,7 @@ t_color		get_average_rgba_from_image(MLV_Image *img, int x1, int x2, int y1, int
 	t_color		moy;
 	int			save_x1;
 	int			nb_px;
-	
+
 	nb_px = 0;
 	save_x1 = x1;
 	init_color(&color);
