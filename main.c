@@ -48,14 +48,21 @@ int		main(void)
 	len = count_node(qt);
 	printf("%d\n", len);
 	(void)i;
-	buf = (unsigned char*)malloc(sizeof(unsigned char) * (len * 100));
+	buf = (unsigned char*)malloc(sizeof(unsigned char) * (len * 20));
 	if (!buf)
 		malloc_handling();
 	while (i < len + 1)
 		buf[i++] = 0;
 	i = 0;
 	encode(qt, &buf, &i);
-	printf("%s\n", buf);
+	len = i;
+	i = 0;
+	while (i < len)
+	{
+		printf("%d", buf[i]);
+		i++;
+	}
+	printf("\n");
 	/*minimise_perte(img, &(qt->no), &(qt->ne));
 	minimise_perte(img, &(qt->no), &(qt->se));
 	minimise_perte(img, &(qt->no), &(qt->so));
