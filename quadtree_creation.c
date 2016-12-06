@@ -3,7 +3,7 @@
 t_qt		*create_tree(void)
 {
 	t_qt	*new_qt;
-	
+
 	new_qt = (t_qt*)malloc(sizeof(t_qt));
 	if (!new_qt)
 		malloc_handling();
@@ -47,7 +47,7 @@ double		dist(t_color px, t_color moy)
 	double powg;
 	double powb;
 	double powa;
-	
+
 	powr = (px.red - moy.red) * (px.red - moy.red);
 	powg = (px.green - moy.green) * (px.green - moy.green);
 	powb = (px.blue - moy.blue) * (px.blue - moy.blue);
@@ -61,7 +61,7 @@ double		get_error_dist(MLV_Image *img, int x1, int x2, int y1, int y2, t_qt **qt
 	t_color		px;
 	double		distance;
 	int			save_x1;
-	
+
 	save_x1 = x1;
 	distance = 0;
 	moy = get_average_rgba_from_image(img, x1, x2, y1, y2);
@@ -73,7 +73,7 @@ double		get_error_dist(MLV_Image *img, int x1, int x2, int y1, int y2, t_qt **qt
 		{
 			MLV_get_pixel_on_image(img, x1, y1, &(px.red), &(px.green),
 				&(px.blue), &(px.alpha));
-			distance += dist(px, moy); 
+			distance += dist(px, moy);
 			x1++;
 		}
 		x1 = save_x1;
@@ -130,14 +130,14 @@ void	go_to_worst(MLV_Image *img, double worst, t_qt **qt, int x1, int x2, int y1
 	go_to_worst(img, worst, &(*qt)->no, x1, d(x1, x2), y1, d(y1, y2));
 	go_to_worst(img, worst, &(*qt)->ne, d(x1, x2), x2, y1, d(y1, y2));
 	go_to_worst(img, worst, &(*qt)->se, d(x1, x2), x2, d(y1, y2), y2);
-	go_to_worst(img, worst, &(*qt)->so, x1, d(x1, x2), d(y1, y2), y2);		
+	go_to_worst(img, worst, &(*qt)->so, x1, d(x1, x2), d(y1, y2), y2);
 }
 
 void	quadtree_maker(MLV_Image *img, t_qt **qt, int operations)
 {
 	int		i;
 	double	worst;
-	
+
 	i = 0;
 	worst = -1;
 	gen_tree(img, qt, 0, TAILLE_X, 0, TAILLE_Y);
