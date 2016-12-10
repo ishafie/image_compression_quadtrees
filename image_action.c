@@ -88,8 +88,8 @@ void		draw_quadtree(t_qt *qt, MLV_Image *img, int x1, int x2, int y1, int y2)
 			x2++;
 		if (y1 == y2)
 			y2++;
-		MLV_draw_filled_circle(x1 + (x2 - x1)/2, y1 + (y2 - y1)/2, (x2 - x1)/2, qt->color);
-		/*MLV_draw_filled_rectangle(x1, y1, x2 - x1, y2 - y1, qt->color);*/
+		/*MLV_draw_filled_circle(x1 + (x2 - x1)/2, y1 + (y2 - y1)/2, (x2 - x1)/2, qt->color);*/
+		MLV_draw_filled_rectangle(x1, y1, x2 - x1, y2 - y1, qt->color);
 		return ;
 	}
 

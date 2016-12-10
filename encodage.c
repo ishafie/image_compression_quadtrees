@@ -5,16 +5,12 @@ void        convert_to_bin(uint8_t c, unsigned char **buf, int *i)
     int     index;
 
     index = 7;
-    printf("\n----\n");
     while (index >= 0)
     {
         (*buf)[*i] = (c | (1u << index)) == c;
-        printf("%d\n", (*buf)[*i]);
         *i += 1;
         index--;
     }
-    printf("%d\n", c);
-    printf("\n----\n");
 }
 
 int        black_or_white(MLV_Color color)

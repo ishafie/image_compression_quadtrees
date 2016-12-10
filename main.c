@@ -27,6 +27,7 @@ void	test_color(void)
 int		main(void)
 {
 	t_qt	*qt;
+	t_qt	*tree;
 	MLV_Image *img;
 	int		i;
 	int		len;
@@ -36,6 +37,7 @@ int		main(void)
 	nb_color = 0;*/
 	qt = NULL;
 	i = 0;
+	tree = NULL;
 	MLV_create_window("QUADTREE", "QUADTREE", TAILLE_X, TAILLE_Y);
 	img = MLV_load_image("img/lion.png");
 	quadtree_maker(img, &qt, OP);
@@ -48,7 +50,7 @@ int		main(void)
 	len = count_node(qt);
 	printf("%d\n", len);
 	(void)i;
-	buf = (unsigned char*)malloc(sizeof(unsigned char) * (len * 20));
+	buf = (unsigned char*)malloc(sizeof(unsigned char) * (len * 200));
 	if (!buf)
 		malloc_handling();
 	while (i < len + 1)
@@ -63,7 +65,15 @@ int		main(void)
 		i++;
 	}
 	printf("\n");
-	/*minimise_perte(img, &(qt->no), &(qt->ne));
+	decode(&tree, buf, 0, strlen((const char*)buf));
+	MLV_clear_window(MLV_COLOR_BLACK);
+	MLV_actualise_window();
+	draw_quadtree(tree, img, 0, TAILLE_X, 0, TAILLE_Y);
+	MLV_actualise_window();
+	MLV_wait_mouse(0, 0);
+
+	return (0);
+	minimise_perte(img, &(qt->no), &(qt->ne));
 	minimise_perte(img, &(qt->no), &(qt->se));
 	minimise_perte(img, &(qt->no), &(qt->so));
 
@@ -83,8 +93,8 @@ int		main(void)
 	MLV_clear_window(MLV_COLOR_BLACK);
 	draw_quadtree(qt, img, 0, TAILLE_X, 0, TAILLE_Y);
 	MLV_actualise_window();
+	printf("fin\n");
 	MLV_wait_mouse(0, 0);
-	*/
 	/*test_color();
 	MLV_actualise_window();
 	MLV_wait_mouse(0, 0);*/

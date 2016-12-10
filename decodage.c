@@ -1,21 +1,35 @@
 #include "includes/quadtree.h"
 
-void        convert_to_dec(uint8_t c, unsigned char **buf, int *i)
+uint8_t     convert_to_dec(unsigned char *buf, int nb)
 {
-    /*
-        TODO
-    */
+    char        bin[8];
+    int         i;
+
+    i = nb;
+    while (buf[i] && i < nb + 8)
+    {
+        bin[nb - i] = buf[i];
+        i++;
+    }
+    return ((uint8_t)strtol(bin, 0, 2));
 }
 
-void	   start_gen_color(unsigned char *code, int *i)
+t_color	   start_gen_color(unsigned char *code, int *i)
 {
-    /*
-        TODO
-    */
+    t_color color;
+
+    color.red = convert_to_dec(code, *i + 8);
+    color.green = convert_to_dec(code, *i + 16);
+    color.blue = convert_to_dec(code, *i + 24);
+    color.alpha = convert_to_dec(code, *i + 32);
+    *i += 40;
+    return (color);
 }
 
 void       decode(t_qt **qt, unsigned char *code, int i, int max)
 {
+    t_color color;
+
     if (i >= max || !code)
         return ;
 	if (code[i] == 0)
@@ -24,7 +38,8 @@ void       decode(t_qt **qt, unsigned char *code, int i, int max)
     }
     else
     {
-        start_gen_color(code, &i);
+        color = start_gen_color(code, &i);
+        MLV_convert_rgba_to_color(color.red, color.green, color.blue, color.alpha);
     }
     i++;
     decode(&(*qt)->no, code, i, max);

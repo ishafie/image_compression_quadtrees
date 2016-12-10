@@ -17,7 +17,8 @@ SRC			=		main.c \
 					quadtree_creation.c \
 					err.c \
 					distance.c \
-					encodage.c
+					encodage.c \
+					decodage.c 
 
 OBJ_NAME	=		$(SRC:.c=.o)
 OBJ_PATH	=		obj/

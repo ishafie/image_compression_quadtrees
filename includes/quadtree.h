@@ -71,6 +71,7 @@ int		is_no_leaf(t_qt *a);
 void	free_tree(t_qt **qt);
 int		is_part_of(t_qt *a, t_qt *b);
 
-void        encode(t_qt *qt, unsigned char **buf, int *i);
+void       encode(t_qt *qt, unsigned char **buf, int *i);
+void       decode(t_qt **qt, unsigned char *code, int i, int max);
 
 #endif
