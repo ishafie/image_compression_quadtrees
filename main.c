@@ -61,17 +61,17 @@ int		main(void)
 	i = 0;
 	while (i < len)
 	{
-		printf("%d", buf[i]);
+		(void)buf;
 		i++;
 	}
+	printf("\n\n\n");
+	decode(&tree, buf, 0, len);
 	printf("\n");
-	decode(&tree, buf, 0, strlen((const char*)buf));
 	MLV_clear_window(MLV_COLOR_BLACK);
 	MLV_actualise_window();
 	draw_quadtree(tree, img, 0, TAILLE_X, 0, TAILLE_Y);
 	MLV_actualise_window();
 	MLV_wait_mouse(0, 0);
-
 	return (0);
 	minimise_perte(img, &(qt->no), &(qt->ne));
 	minimise_perte(img, &(qt->no), &(qt->se));

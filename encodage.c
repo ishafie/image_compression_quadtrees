@@ -8,6 +8,7 @@ void        convert_to_bin(uint8_t c, unsigned char **buf, int *i)
     while (index >= 0)
     {
         (*buf)[*i] = (c | (1u << index)) == c;
+        printf("%d", (*buf)[*i]);
         *i += 1;
         index--;
     }
@@ -26,8 +27,11 @@ void        convert_to_bin_rgba(MLV_Color color, unsigned char **buf, int *i)
 
     MLV_Color_to_color(color, &c);
     convert_to_bin(c.red, buf, i);
+    printf("][");
     convert_to_bin(c.green, buf, i);
+    printf("][");
     convert_to_bin(c.blue, buf, i);
+    printf("][");
     convert_to_bin(c.alpha, buf, i);
 }
 
@@ -38,15 +42,18 @@ void        encode(t_qt *qt, unsigned char **buf, int *i)
     if (!is_leaf(qt))
     {
         (*buf)[*i] = 0;
+        printf("0");
         *i = *i + 1;
     }
     else
     {
         (*buf)[*i] = 1;
         *i = *i + 1;
+        printf("1[");
         if (!color_equal(qt->color, MLV_COLOR_WHITE, 10) && !color_equal(qt->color, MLV_COLOR_BLACK, 10))
         {
             convert_to_bin_rgba(qt->color, buf, i);
+            printf("]");
         }
         else
         {
