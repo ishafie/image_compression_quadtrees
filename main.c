@@ -64,8 +64,9 @@ int		main(void)
 		(void)buf;
 		i++;
 	}
+	i = 0;
 	printf("\n\n\n");
-	decode(&tree, buf, 0, len);
+	decode(&tree, buf, &i, len);
 	printf("\n");
 	MLV_clear_window(MLV_COLOR_BLACK);
 	MLV_actualise_window();

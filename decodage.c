@@ -3,8 +3,11 @@
 uint8_t     convert_to_dec(unsigned char *buf, int nb, int len)
 {
     char        bin[8];
+    char        *binPtr;
     int         i;
+    int         total;
 
+    total = 0;
     i = nb - 8;
     while (i < nb && i < len)
     {
@@ -13,13 +16,17 @@ uint8_t     convert_to_dec(unsigned char *buf, int nb, int len)
         printf("%d", buf[i]);
         i++;
     }
-    /*i = 0;
+    i = 0;
+    binPtr = &bin[0];
     while (i < 8)
     {
-        printf("%d\n", bin[i]);
+        total *= 2;
+        if (*binPtr++ == 1)
+            total += 1;
         i++;
-    }*/
-    return ((uint8_t)strtol(bin, 0, 2));
+    }
+/*    printf("%ld\n", strtol(bin, 0, 2));*/
+    return ((uint8_t)total);
 }
 
 t_color	   start_gen_color(unsigned char *code, int *i, int len)
@@ -37,32 +44,30 @@ t_color	   start_gen_color(unsigned char *code, int *i, int len)
     return (color);
 }
 
-void       decode(t_qt **qt, unsigned char *code, int i, int max)
+void       decode(t_qt **qt, unsigned char *code, int *i, int max)
 {
     t_color color;
 
-    if (i >= max || !code)
-    {
-        printf("stop i = %d et max = %d\n", i, max);
+    if (*i >= max || !code)
         return ;
-    }
-	if (code[i] == 0)
+	if (code[*i] == 0)
     {
         printf("0");
         *qt = create_tree();
+        *i += 1;
+        decode(&(*qt)->no, code, i, max);
+        decode(&(*qt)->ne, code, i, max);
+        decode(&(*qt)->se, code, i, max);
+        decode(&(*qt)->so, code, i, max);
     }
     else
     {
+        *qt = create_tree();
         printf("1[");
-        i++;
-        color = start_gen_color(code, &i, max);
-        printf("]");
-        MLV_convert_rgba_to_color(color.red, color.green, color.blue, color.alpha);
+        *i += 1;
+        color = start_gen_color(code, i, max);
+        (*qt)->color = MLV_convert_rgba_to_color(color.red, color.green, color.blue, color.alpha);
         return ;
     }
-    i++;
-    decode(&(*qt)->no, code, i, max);
-    decode(&(*qt)->ne, code, i, max);
-    decode(&(*qt)->se, code, i, max);
-    decode(&(*qt)->so, code, i, max);
+
 }
