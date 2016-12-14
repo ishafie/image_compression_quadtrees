@@ -68,6 +68,7 @@ int		main(void)
 	printf("\n\n\n");
 	decode(&tree, buf, &i, len);
 	printf("\n");
+	write_in_file("lion", buf, len);
 	MLV_clear_window(MLV_COLOR_BLACK);
 	MLV_actualise_window();
 	draw_quadtree(tree, img, 0, TAILLE_X, 0, TAILLE_Y);

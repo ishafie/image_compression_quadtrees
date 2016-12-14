@@ -1,6 +1,31 @@
 #include "includes/quadtree.h"
 
-void        convert_to_bin(uint8_t c, unsigned char **buf, int *i)
+void	   write_in_file(const char *name, const unsigned char *buf, int len)
+{
+    FILE *fp;
+    char *filename;
+    int     i;
+    int     filelen;
+
+    filelen = strlen(name) + 5;
+    i = 0;
+    filename = (char*)malloc(sizeof(char) * filelen);
+    if (!filename)
+        malloc_handling();
+    while (i < filelen)
+    {
+        filename[i] = 0;
+        i++;
+    }
+    strcpy(filename, name);
+    strcat(filename, ".tgc");
+    fp = fopen(name, "wb");
+    if (!fp)
+        malloc_handling();
+    fwrite(buf, sizeof(char), len, fp);
+}
+
+void       convert_to_bin(uint8_t c, unsigned char **buf, int *i)
 {
     int     index;
 
@@ -50,16 +75,8 @@ void        encode(t_qt *qt, unsigned char **buf, int *i)
         (*buf)[*i] = 1;
         *i = *i + 1;
         printf("1[");
-        if (!color_equal(qt->color, MLV_COLOR_WHITE, 10) && !color_equal(qt->color, MLV_COLOR_BLACK, 10))
-        {
-            convert_to_bin_rgba(qt->color, buf, i);
-            printf("]");
-        }
-        else
-        {
-            (*buf)[*i] = black_or_white(qt->color);
-            *i += 1;
-        }
+        convert_to_bin_rgba(qt->color, buf, i);
+        printf("] i = %d\n", *i);
     }
     encode(qt->no, buf, i);
     encode(qt->ne, buf, i);

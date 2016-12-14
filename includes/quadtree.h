@@ -4,7 +4,7 @@
 # define PERTE 6
 # define TAILLE_X 512
 # define TAILLE_Y 512
-# define OP 10
+# define OP 1000
 # define DISPLAY 0
 # define TRUE 1
 
@@ -73,5 +73,6 @@ int		is_part_of(t_qt *a, t_qt *b);
 
 void       encode(t_qt *qt, unsigned char **buf, int *i);
 void       decode(t_qt **qt, unsigned char *code, int *i, int max);
+void	   write_in_file(const char *name, const unsigned char *buf, int len);
 
 #endif

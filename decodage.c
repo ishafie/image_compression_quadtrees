@@ -50,10 +50,10 @@ void       decode(t_qt **qt, unsigned char *code, int *i, int max)
 
     if (*i >= max || !code)
         return ;
+    *qt = create_tree();
 	if (code[*i] == 0)
     {
         printf("0");
-        *qt = create_tree();
         *i += 1;
         decode(&(*qt)->no, code, i, max);
         decode(&(*qt)->ne, code, i, max);
@@ -62,11 +62,12 @@ void       decode(t_qt **qt, unsigned char *code, int *i, int max)
     }
     else
     {
-        *qt = create_tree();
+
         printf("1[");
         *i += 1;
         color = start_gen_color(code, i, max);
         (*qt)->color = MLV_convert_rgba_to_color(color.red, color.green, color.blue, color.alpha);
+        printf("] i = %d et max = %d\n", *i, max);
         return ;
     }
 
