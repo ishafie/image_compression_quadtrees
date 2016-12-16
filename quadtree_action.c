@@ -177,7 +177,7 @@ void	check_dist_and_relink(MLV_Image *img, t_qt **racine, t_qt **qt, t_qt **save
 	int	relink;
 
 	relink = 1;
-	if (dist >= 10)
+	if (dist >= 11)
 		return ;
 		(void)qt;
 	if (is_part_of(*qt, *racine) || is_part_of(*racine, *qt))

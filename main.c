@@ -24,7 +24,7 @@ void	test_color(void)
 	}
 }
 
-void		test_decode_encode(MLV_Image *img, t_qt *qt)
+void		test_decode_encode(t_qt *qt)
 {
 	int		i;
 	int		len;
@@ -53,33 +53,56 @@ void		test_decode_encode(MLV_Image *img, t_qt *qt)
 	printf("\n\n\n");
 	decode(&tree, buf, &i, len);
 	printf("\n");
-	draw_quadtree(qt, img, 0, TAILLE_X, 0, TAILLE_Y);
+	draw_quadtree(qt, 0, TAILLE_X, 0, TAILLE_Y);
 	MLV_actualise_window();
 	MLV_wait_mouse(0, 0);
 	MLV_clear_window(MLV_COLOR_BLACK);
 	MLV_actualise_window();
-	draw_quadtree(tree, img, 0, TAILLE_X, 0, TAILLE_Y);
+	draw_quadtree(tree, 0, TAILLE_X, 0, TAILLE_Y);
 	MLV_actualise_window();
 	MLV_wait_mouse(0, 0);
 	write_in_file("lion", buf, len);
 }
 
+void	test_lstorder(t_list *l_dist)
+{
+	t_zone zone;
+	
+	fill_zone(&zone, 0, 0, 0, 0);
+	add_order(&l_dist, NULL, 1, zone);
+	add_order(&l_dist, NULL, 1, zone);
+	add_order(&l_dist, NULL, 10, zone);
+	add_order(&l_dist, NULL, 5, zone);
+	add_order(&l_dist, NULL, 2, zone);
+	add_order(&l_dist, NULL, 2, zone);
+	add_order(&l_dist, NULL, 6, zone);
+	add_order(&l_dist, NULL, 3, zone);
+	add_order(&l_dist, NULL, 4, zone);
+	display_list(l_dist);
+}
+
+
 int		main(void)
 {
 	t_qt	*qt;
+	t_list	*l_dist;
 	MLV_Image *img;
 
 	/*int		nb_color;
-
 	nb_color = 0;*/
+	l_dist = NULL;
 	qt = NULL;
 	MLV_create_window("QUADTREE", "QUADTREE", TAILLE_X, TAILLE_Y);
 	img = MLV_load_image("img/lion.png");
-	quadtree_maker(img, &qt, OP);
+	quadtree_maker2(&l_dist, img, &qt, OP);
+	display_list(l_dist);
 	/*check_every_color_doublon(&qt, &qt, &nb_color);*/
 	/*printf("nb of colors = %d\n", nb_color);*/
 	g_test = qt;
-
+	MLV_clear_window(MLV_COLOR_BLACK);
+	draw_quadtree(qt, 0, TAILLE_X, 0, TAILLE_Y);
+	MLV_actualise_window();
+	MLV_wait_mouse(0,0);
 	return (0);
 	minimise_perte(img, &(qt->no), &(qt->ne));
 	minimise_perte(img, &(qt->no), &(qt->se));
@@ -99,7 +122,7 @@ int		main(void)
 
 	MLV_wait_mouse(0, 0);
 	MLV_clear_window(MLV_COLOR_BLACK);
-	draw_quadtree(qt, img, 0, TAILLE_X, 0, TAILLE_Y);
+	draw_quadtree(qt, 0, TAILLE_X, 0, TAILLE_Y);
 	MLV_actualise_window();
 	printf("fin\n");
 	MLV_wait_mouse(0, 0);

@@ -4,7 +4,7 @@
 # define PERTE 6
 # define TAILLE_X 512
 # define TAILLE_Y 512
-# define OP 1000
+# define OP 1000 /* 65536 > 9minutes */
 # define DISPLAY 0
 # define TRUE 1
 
@@ -12,6 +12,14 @@
 # include <stdlib.h>
 # include <math.h>
 # include <MLV/MLV_all.h>
+
+typedef struct			s_zone
+{
+	int					x1;
+	int					x2;
+	int					y1;
+	int					y2;
+}						t_zone;
 
 typedef struct			s_color
 {
@@ -31,20 +39,31 @@ typedef struct			s_quadtree
 	MLV_Color			color;
 }						t_qt;
 
+typedef struct			s_list
+{
+	int					processed;
+	struct s_list		*next;
+	struct s_quadtree	*ptr;
+	double				dist;
+	struct s_zone		zone;
+}						t_list;
+
 t_qt		*g_test;
 
 void		malloc_handling();
 void		err_what(int err);
 
-int		cmp_tree(t_qt **qt, t_qt **paire);
+int			cmp_tree(t_qt **qt, t_qt **paire);
 
 double		dist(t_color px, t_color moy);
 t_qt		*create_tree(void);
-void	MLV_Color_to_color(MLV_Color x, t_color *x_c);
-int		count_node(t_qt *qt);
-double	max(double a, double b);
-int		get_prof(t_qt *qt, int prof);
-void	minimise_prof(t_qt **qt, int nb_color, int max_prof);
+void		MLV_Color_to_color(MLV_Color x, t_color *x_c);
+int			count_node(t_qt *qt);
+double		max(double a, double b);
+int			get_prof(t_qt *qt, int prof);
+void		minimise_prof(t_qt **qt, int nb_color, int max_prof);
+
+void		quadtree_maker2(t_list **l, MLV_Image *img, t_qt **qt, int operations);
 
 void		quadtree_maker(MLV_Image *img, t_qt **qt, int operations);
 void		print_every_color_equal(t_qt **qt, t_qt **tmp, MLV_Color, int *nb_color);
@@ -58,21 +77,27 @@ MLV_Color	get_average_color_from_image(MLV_Image *img, int x1, int x2, int y1, i
 t_color		get_average_rgba_from_image(MLV_Image *img, int x1, int x2, int y1, int y2);
 int			generate_tree(MLV_Image *img, int max_prof, t_qt **qt, int x1, int x2, int y1, int y2);
 int			is_leaf(t_qt *qt);
-void		draw_quadtree(t_qt *qt, MLV_Image *img, int x1, int x2, int y1, int y2);
-int		color_equal(MLV_Color x, MLV_Color y, int perte);
-int		color_diff(MLV_Color x, MLV_Color y);
+void		draw_quadtree(t_qt *qt, int x1, int x2, int y1, int y2);
+int			color_equal(MLV_Color x, MLV_Color y, int perte);
+int			color_diff(MLV_Color x, MLV_Color y);
 
-void	find_tree_min_dist(MLV_Image *img, t_qt **qt, t_qt **paire);
-void	minimise_perte(MLV_Image *img, t_qt **racine, t_qt **qt);
-void	minimise_perte_hub(MLV_Image *img, t_qt **racine, t_qt **qt);
+void		find_tree_min_dist(MLV_Image *img, t_qt **qt, t_qt **paire);
+void		minimise_perte(MLV_Image *img, t_qt **racine, t_qt **qt);
+void		minimise_perte_hub(MLV_Image *img, t_qt **racine, t_qt **qt);
 
-double	get_dist_final(t_qt **a, t_qt **b);
-int		is_no_leaf(t_qt *a);
-void	free_tree(t_qt **qt);
-int		is_part_of(t_qt *a, t_qt *b);
+double		get_dist_final(t_qt **a, t_qt **b);
+int			is_no_leaf(t_qt *a);
+void		free_tree(t_qt **qt);
+int			is_part_of(t_qt *a, t_qt *b);
 
-void       encode(t_qt *qt, unsigned char **buf, int *i);
-void       decode(t_qt **qt, unsigned char *code, int *i, int max);
-void	   write_in_file(const char *name, const unsigned char *buf, int len);
+void		encode(t_qt *qt, unsigned char **buf, int *i);
+void		decode(t_qt **qt, unsigned char *code, int *i, int max);
+void		write_in_file(const char *name, const unsigned char *buf, int len);
+
+void		display_list(t_list *l);
+int 		add_order(t_list **l, t_qt *ptr, double dist, t_zone zone);
+
+void		fill_zone(t_zone *zone, int x1, int x2, int y1, int y2);
+void		print_zone(t_zone z);
 
 #endif

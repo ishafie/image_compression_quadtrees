@@ -18,7 +18,8 @@ SRC			=		main.c \
 					err.c \
 					distance.c \
 					encodage.c \
-					decodage.c 
+					decodage.c \
+					lst_add_order.c \
 
 OBJ_NAME	=		$(SRC:.c=.o)
 OBJ_PATH	=		obj/

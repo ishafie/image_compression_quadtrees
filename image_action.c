@@ -78,25 +78,20 @@ static int		d(int x1, int x2)
 	return (x2 - ((x2 - x1) / 2));
 }
 
-void		draw_quadtree(t_qt *qt, MLV_Image *img, int x1, int x2, int y1, int y2)
+void		draw_quadtree(t_qt *qt, int x1, int x2, int y1, int y2)
 {
 	if (!qt)
 		return ;
 	if (is_leaf(qt))
 	{
-		if (x1 == x2)
-			x2++;
-		if (y1 == y2)
-			y2++;
 		/*MLV_draw_filled_circle(x1 + (x2 - x1)/2, y1 + (y2 - y1)/2, (x2 - x1)/2, qt->color);*/
 		MLV_draw_filled_rectangle(x1, y1, x2 - x1, y2 - y1, qt->color);
 		return ;
 	}
-
-	draw_quadtree(qt->no, img, x1, d(x1, x2), y1, d(y1, y2));
-	draw_quadtree(qt->ne, img, d(x1, x2), x2, y1, d(y1, y2));
-	draw_quadtree(qt->se, img, d(x1, x2), x2, d(y1, y2), y2);
-	draw_quadtree(qt->so, img, x1, d(x1, x2), d(y1, y2), y2);
+	draw_quadtree(qt->no, x1, d(x1, x2), y1, d(y1, y2));
+	draw_quadtree(qt->ne, d(x1, x2), x2, y1, d(y1, y2));
+	draw_quadtree(qt->se, d(x1, x2), x2, d(y1, y2), y2);
+	draw_quadtree(qt->so, x1, d(x1, x2), d(y1, y2), y2);
 
 }
 

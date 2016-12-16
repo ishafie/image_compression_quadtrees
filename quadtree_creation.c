@@ -87,25 +87,53 @@ double	max(double a, double b)
 	return (a > b ? a : b);
 }
 
-void		gen_tree(MLV_Image *img, t_qt **qt, int x1, int x2, int y1, int y2)
+void		fill_zone(t_zone *zone, int x1, int x2, int y1, int y2)
 {
+	(*zone).x1 = x1;
+	(*zone).x2 = x2;
+	(*zone).y1 = y1;
+	(*zone).y2 = y2;
+}
+
+void		gen_tree(t_list **l, MLV_Image *img, t_qt **qt, t_zone zone)
+{
+	t_zone save;
+	
+	fill_zone(&save, zone.x1, zone.x2, zone.y1, zone.y2);
 	if (!(*qt))
 	{
 		(*qt) = create_tree();
-		(*qt)->dist = get_error_dist(img, x1, x2, y1, y2, qt);;
+		(*qt)->dist = get_error_dist(img, zone.x1, zone.x2, zone.y1, zone.y2, qt);
+		add_order(l, (*qt), (*qt)->dist, zone);
 	}
 	if (!(*qt)->no)
+	{
 		(*qt)->no = create_tree();
+		(*qt)->no->dist = get_error_dist(img, save.x1, d(save.x1, save.x2), save.y1, d(save.y1, save.y2), &((*qt)->no));
+		fill_zone(&zone, save.x1, d(save.x1, save.x2), save.y1, d(save.y1, save.y2));
+		add_order(l, (*qt)->no, (*qt)->no->dist, zone);
+	}
 	if (!(*qt)->ne)
+	{
 		(*qt)->ne = create_tree();
+		(*qt)->ne->dist = get_error_dist(img, d(save.x1, save.x2), save.x2, save.y1, d(save.y1, save.y2), &((*qt)->ne));
+		fill_zone(&zone, d(save.x1, save.x2), save.x2, save.y1, d(save.y1, save.y2));
+		add_order(l, (*qt)->ne, (*qt)->ne->dist, zone);
+	}
 	if (!(*qt)->se)
+	{
 		(*qt)->se = create_tree();
+		(*qt)->se->dist = get_error_dist(img, d(save.x1, save.x2), save.x2, d(save.y1, save.y2), save.y2, &((*qt)->se));
+		fill_zone(&zone, d(save.x1, save.x2), save.x2, d(save.y1, save.y2), save.y2);
+		add_order(l, (*qt)->se, (*qt)->se->dist, zone);
+	}
 	if (!(*qt)->so)
+	{
 		(*qt)->so = create_tree();
-	(*qt)->no->dist = get_error_dist(img, x1, d(x1, x2), y1, d(y1, y2), &((*qt)->no));
-	(*qt)->ne->dist = get_error_dist(img, d(x1, x2), x2, y1, d(y1, y2), &((*qt)->ne));
-	(*qt)->se->dist = get_error_dist(img, d(x1, x2), x2, d(y1, y2), y2, &((*qt)->se));
-	(*qt)->so->dist = get_error_dist(img, x1, d(x1, x2), d(y1, y2), y2, &((*qt)->so));
+		(*qt)->so->dist = get_error_dist(img, save.x1, d(save.x1, save.x2), d(save.y1, save.y2), save.y2, &((*qt)->so));
+		fill_zone(&zone, save.x1, d(save.x1, save.x2), d(save.y1, save.y2), save.y2);
+		add_order(l, (*qt)->so, (*qt)->so->dist, zone);
+	}
 }
 
 double	find_worst(t_qt *qt, double worst)
@@ -118,22 +146,24 @@ double	find_worst(t_qt *qt, double worst)
 
 }
 
-void	go_to_worst(MLV_Image *img, double worst, t_qt **qt, int x1, int x2, int y1, int y2)
+void	go_to_worst(t_list **l, MLV_Image *img, double worst, t_qt **qt, t_zone zone)
 {
+	(void)worst;
 	if (!(*qt))
 		return ;
-	if ((*qt)->dist == worst)
+	gen_tree(l, img, qt, zone);
+/*	if ((*qt)->dist == worst)
 	{
-		gen_tree(img, qt, x1, x2, y1, y2);
+		gen_tree(l, img, qt, x1, x2, y1, y2);
 		return ;
 	}
-	go_to_worst(img, worst, &(*qt)->no, x1, d(x1, x2), y1, d(y1, y2));
-	go_to_worst(img, worst, &(*qt)->ne, d(x1, x2), x2, y1, d(y1, y2));
-	go_to_worst(img, worst, &(*qt)->se, d(x1, x2), x2, d(y1, y2), y2);
-	go_to_worst(img, worst, &(*qt)->so, x1, d(x1, x2), d(y1, y2), y2);
+	go_to_worst(l, img, worst, &(*qt)->no, x1, d(x1, x2), y1, d(y1, y2));
+	go_to_worst(l, img, worst, &(*qt)->ne, d(x1, x2), x2, y1, d(y1, y2));
+	go_to_worst(l, img, worst, &(*qt)->se, d(x1, x2), x2, d(y1, y2), y2);
+	go_to_worst(l, img, worst, &(*qt)->so, x1, d(x1, x2), d(y1, y2), y2);*/
 }
 
-void	quadtree_maker(MLV_Image *img, t_qt **qt, int operations)
+/*void	quadtree_maker(MLV_Image *img, t_qt **qt, int operations)
 {
 	int		i;
 	double	worst;
@@ -150,10 +180,64 @@ void	quadtree_maker(MLV_Image *img, t_qt **qt, int operations)
 		if (DISPLAY == TRUE)
 		{
 			MLV_clear_window(MLV_COLOR_BLACK);
-			draw_quadtree(*qt, img, 0, TAILLE_X, 0, TAILLE_Y);
+			draw_quadtree(*qt, 0, TAILLE_X, 0, TAILLE_Y);
 			MLV_actualise_window();
 		}
-
 		i++;
 	}
+}*/
+
+t_list	*go_to_not_processed(t_list **l)
+{
+	t_list	*tmp;
+	
+	tmp = *l;
+	while (tmp)
+	{
+		if (tmp->processed == 0)
+		{
+			printf("dist = %f\n", tmp->dist);
+			return tmp;
+		}
+		tmp = tmp->next;
+	}
+	return NULL;
 }
+
+void	print_zone(t_zone z)
+{
+	printf("(%d,%d) - (%d, %d)\n", z.x1, z.x2, z.y1, z.y2);
+}
+
+void	quadtree_maker2(t_list **l, MLV_Image *img, t_qt **qt, int operations)
+{
+	int		i;
+	t_zone zone;
+	t_list	*tmp;
+	
+	tmp = *l;
+	fill_zone(&zone, 0, TAILLE_X, 0, TAILLE_Y);
+	i = 0;
+	gen_tree(l, img, qt, zone);
+	if (!*qt)
+		err_what(0);
+	print_zone((*l)->next->next->zone);
+	while (i < operations)
+	{
+		tmp = go_to_not_processed(l);
+		if (!tmp)
+			return ;
+		tmp->processed = 1;
+		print_zone(tmp->zone);
+		go_to_worst(l, img, tmp->dist, &(tmp->ptr), tmp->zone);
+		if (DISPLAY == TRUE)
+		{
+			MLV_clear_window(MLV_COLOR_BLACK);
+			draw_quadtree(*qt, 0, TAILLE_X, 0, TAILLE_Y);
+			MLV_actualise_window();
+		}
+		i++;
+	}
+
+}
+
