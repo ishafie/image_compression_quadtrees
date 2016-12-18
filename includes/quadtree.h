@@ -4,7 +4,7 @@
 # define PERTE 6
 # define TAILLE_X 512
 # define TAILLE_Y 512
-# define OP 65536 /* 65536 - 45sec */
+# define OP 10000 /* 65536 - 45sec */
 # define DISPLAY 0
 # define TRUE 1
 
@@ -120,5 +120,11 @@ int 		add_order(t_list **l, t_list **last, t_qt *ptr, double dist, t_zone zone);
 
 void		fill_zone(t_zone *zone, int x1, int x2, int y1, int y2);
 void		print_zone(t_zone z);
+
+
+
+void	free_tree(t_qt **qt);
+void 	analyze_and_minimize(t_qt **qt);
+double	distance_two_inner_tree(t_qt **a, t_qt **b);
 
 #endif

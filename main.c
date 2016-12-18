@@ -89,17 +89,6 @@ void 	*test(void *t)
 	return NULL;
 }
 
-void 	test_thread(void)
-{
-	pthread_t thread_store;
-
-	if (pthread_create(&thread_store, NULL, test, NULL))
-	{
-		printf("nope\n");
-	}
-	pthread_join(thread_store, NULL);
-}
-
 int		main(void)
 {
 	t_qt	*qt;
@@ -124,11 +113,12 @@ int		main(void)
 	/*display_list(l_dist);*/
 	/*check_every_color_doublon(&qt, &qt, &nb_color);*/
 	/*printf("nb of colors = %d\n", nb_color);*/
+	analyze_and_minimize(&qt);
 	g_test = qt;
 	MLV_clear_window(MLV_COLOR_BLACK);
 	draw_quadtree(qt, 0, TAILLE_X, 0, TAILLE_Y);
 	MLV_actualise_window();
-	/*MLV_wait_mouse(0, 0);*/
+	MLV_wait_mouse(0, 0);
 	/*printf("nombre d'op creation = %d\n", g_nb_op_creation);*/
 	/*printf("nombre d'op parcours = %d\n", g_nb_op_parcours);*/
 	return (0);

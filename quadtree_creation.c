@@ -21,26 +21,6 @@ static int	d(int x1, int x2)
 	return (x2 - ((x2 - x1) / 2));
 }
 
-
-void	generate_tree_test(MLV_Image *img, int max_prof, t_qt **qt, int x1, int x2, int y1, int y2)
-{
-	(*qt) = create_tree();
-	(*qt)->dist = get_error_dist(img, x1, x2, y1, y2, qt);
-	if (max_prof == 0)
-	{
-		printf("x1 = %d -> x2 = %d | y1 = %d -> y2 = %d\n", x1, x2, y1, y2);
-		return ;
-	}
-	printf("NO\n");
-	generate_tree_test(img, max_prof - 1, &(*qt)->no, x1, d(x1, x2), y1, d(y1, y2));
-	printf("NE\n");
-	generate_tree_test(img, max_prof - 1, &(*qt)->ne, d(x1, x2), x2, y1, d(y1, y2));
-	printf("SE\n");
-	generate_tree_test(img, max_prof - 1, &(*qt)->se, d(x1, x2), x2, d(y1, y2), y2);
-	printf("SO\n");
-	generate_tree_test(img, max_prof - 1, &(*qt)->so, x1, d(x1, x2), d(y1, y2), y2);
-}
-
 double		dist(t_color px, t_color moy)
 {
 	double powr;
@@ -125,22 +105,28 @@ void 		*create_list_and_tree_thread(void *args)
 	y2 = arg->y2;
 	(*qt) = create_tree();
 	(*qt)->dist = get_error_dist(img, x1, x2, y1, y2, qt);
+	(void)l;
+	(void)zone;
+	/*
 	fill_zone(&zone, x1, x2, y1, y2);
 	add_order(&(*l)->first, &(*l)->last, (*qt), (*qt)->dist, zone);
+	*/
 	return (NULL);
 }
 
 void 		create_list_and_tree(t_qt **qt, t_lc **l, MLV_Image *img, int x1, int x2, int y1, int y2)
 {
-	t_zone zone;
-	/*int pthread_create(pthread_t *thread, pthread_attr_t *attr, void *(*start_routine) (void *), void *arg);*/
+	t_zone	zone;
+
 	(*qt) = create_tree();
-	(*qt)->dist = get_error_dist(img, x1, x2, y1, y2, qt);
+	(*qt)->dist = get_error_dist(img, x1, x2, y1, y2, qt);;
+	if ((*qt)->dist == 0.0 && (x2 - x1) > 1 && (y2 - y1) > 1)
+		return ;
 	fill_zone(&zone, x1, x2, y1, y2);
 	add_order(&(*l)->first, &(*l)->last, (*qt), (*qt)->dist, zone);
 }
 
-int			join_thread(pthread_t *thread_store, int nb_thread)
+int			join_thread(pthread_t thread_store[4], int nb_thread)
 {
 	static int nb_closed = 0;
 	int		i;
@@ -151,15 +137,14 @@ int			join_thread(pthread_t *thread_store, int nb_thread)
 		if (!pthread_join(thread_store[i], NULL))
 			nb_closed++;
 	}
-	free(thread_store);
 	return (1);
 }
 
 int			gen_tree(t_lc **l, MLV_Image *img, t_qt **qt, t_zone zone)
 {
-	int					nb_thread;
 	t_zone				save;
-	pthread_t			*thread_store;
+	int					nb_thread;
+	pthread_t			thread_store[4];
 	t_thread			args[4];
 
 	nb_thread = 0;
@@ -170,44 +155,9 @@ int			gen_tree(t_lc **l, MLV_Image *img, t_qt **qt, t_zone zone)
 		(*qt)->dist = get_error_dist(img, zone.x1, zone.x2, zone.y1, zone.y2, qt);
 		add_order(&(*l)->first, &(*l)->last,(*qt), (*qt)->dist, zone);
 	}
-
-	/*thread_store = (pthread_t*)malloc(sizeof(pthread_t) * 4);
-	if (!thread_store)
-		malloc_handling();
-	fill_thread_args(&args[0], &((*qt)->no), l, img, save.x1, d(save.x1, save.x2), save.y1, d(save.y1, save.y2));
-	fill_thread_args(&args[1], &((*qt)->ne), l, img, d(save.x1, save.x2), save.x2, save.y1, d(save.y1, save.y2));
-	fill_thread_args(&args[2], &((*qt)->se), l, img, d(save.x1, save.x2), save.x2, d(save.y1, save.y2), save.y2);
-	fill_thread_args(&args[3], &((*qt)->so), l, img, save.x1, d(save.x1, save.x2), d(save.y1, save.y2), save.y2);
-	if (!(*qt)->no)
-	{
-		if (pthread_create(&thread_store[nb_thread], NULL, create_list_and_tree_thread, (void*)&args[0]))
-			exit(EXIT_FAILURE);
-		nb_thread++;
-	}
-	if (!(*qt)->ne)
-	{
-		if (pthread_create(&thread_store[nb_thread], NULL, create_list_and_tree_thread, (void*)&args[1]))
-			exit(EXIT_FAILURE);
-		nb_thread++;
-	}
-	if (!(*qt)->se)
-	{
-		if (pthread_create(&thread_store[nb_thread], NULL, create_list_and_tree_thread, (void*)&args[2]))
-			exit(EXIT_FAILURE);
-		nb_thread++;
-	}
-	if (!(*qt)->so)
-	{
-		if (pthread_create(&thread_store[nb_thread], NULL, create_list_and_tree_thread, (void*)&args[3]))
-			exit(EXIT_FAILURE);
-		nb_thread++;
-	}
-	join_thread(thread_store, nb_thread);
-	*/
-
-	(void)args;
 	(void)thread_store;
 	(void)nb_thread;
+	(void)args;
 	if (!(*qt)->no)
 		create_list_and_tree(&(*qt)->no, l, img, save.x1, d(save.x1, save.x2), save.y1, d(save.y1, save.y2));
 	if (!(*qt)->ne)
@@ -216,7 +166,6 @@ int			gen_tree(t_lc **l, MLV_Image *img, t_qt **qt, t_zone zone)
 		create_list_and_tree(&(*qt)->se, l, img, d(save.x1, save.x2), save.x2, d(save.y1, save.y2), save.y2);
 	if (!(*qt)->so)
 		create_list_and_tree(&(*qt)->so, l, img, save.x1, d(save.x1, save.x2), d(save.y1, save.y2), save.y2);
-
 	return (1);
 }
 
@@ -298,7 +247,6 @@ void	quadtree_maker2(t_lc **l, MLV_Image *img, t_qt **qt, int operations)
 		err_what(0);
 	while (i < operations)
 	{
-		/*printf("i = %d\n", i);*/
 		/*tmp = go_to_not_processed(l, &prev);
 		if (!tmp)
 			return ;*/

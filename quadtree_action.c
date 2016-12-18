@@ -224,12 +224,8 @@ void	minimise_perte(MLV_Image *img, t_qt **racine, t_qt **qt)
 	if (!*racine)
 		return ;
 	minimise_perte_hub(img, racine, qt);
-	/*printf("RACINE NO\n");*/
 	minimise_perte(img, &((*racine)->no), qt);
-	/*printf("RACINE NE\n");*/
 	minimise_perte(img, &((*racine)->ne), qt);
-	/*printf("RACINE SE\n");*/
 	minimise_perte(img, &((*racine)->se), qt);
-	/*printf("RACINE SO\n");*/
 	minimise_perte(img, &((*racine)->so), qt);
 }
