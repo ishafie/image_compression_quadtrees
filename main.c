@@ -64,45 +64,73 @@ void		test_decode_encode(t_qt *qt)
 	write_in_file("lion", buf, len);
 }
 
-void	test_lstorder(t_list *l_dist)
+void	test_lstorder(t_list *l_dist, t_list *last)
 {
 	t_zone zone;
-	
+
 	fill_zone(&zone, 0, 0, 0, 0);
-	add_order(&l_dist, NULL, 1, zone);
-	add_order(&l_dist, NULL, 1, zone);
-	add_order(&l_dist, NULL, 10, zone);
-	add_order(&l_dist, NULL, 5, zone);
-	add_order(&l_dist, NULL, 2, zone);
-	add_order(&l_dist, NULL, 2, zone);
-	add_order(&l_dist, NULL, 6, zone);
-	add_order(&l_dist, NULL, 3, zone);
-	add_order(&l_dist, NULL, 4, zone);
-	display_list(l_dist);
+	add_order(&l_dist, &last, NULL, 1, zone);
+	add_order(&l_dist, &last, NULL, 1, zone);
+	add_order(&l_dist, &last, NULL, 10, zone);
+	add_order(&l_dist, &last, NULL, 5, zone);
+	add_order(&l_dist, &last, NULL, 2, zone);
+	add_order(&l_dist, &last, NULL, 2, zone);
+	add_order(&l_dist, &last, NULL, 6, zone);
+	add_order(&l_dist, &last, NULL, 3, zone);
+	add_order(&l_dist, &last, NULL, 4, zone);
+	add_order(&l_dist, &last, NULL, 0, zone);
+	display_list(l_dist, last);
 }
 
+void 	*test(void *t)
+{
+	(void)t;
+	printf("ok\n");
+	return NULL;
+}
+
+void 	test_thread(void)
+{
+	pthread_t thread_store;
+
+	if (pthread_create(&thread_store, NULL, test, NULL))
+	{
+		printf("nope\n");
+	}
+	pthread_join(thread_store, NULL);
+}
 
 int		main(void)
 {
 	t_qt	*qt;
+	t_lc	*lc;
 	t_list	*l_dist;
 	MLV_Image *img;
 
+	g_nb_op_creation = 0;
+	g_nb_op_parcours = 0;
 	/*int		nb_color;
 	nb_color = 0;*/
+	lc = (t_lc*)malloc(sizeof(t_lc));
 	l_dist = NULL;
+	lc->first = l_dist;
+	lc->last = l_dist;
 	qt = NULL;
+	/*test_lstorder(lc->first, lc->last);
+	return (0);*/
 	MLV_create_window("QUADTREE", "QUADTREE", TAILLE_X, TAILLE_Y);
 	img = MLV_load_image("img/lion.png");
-	quadtree_maker2(&l_dist, img, &qt, OP);
-	display_list(l_dist);
+	quadtree_maker2(&lc, img, &qt, OP);
+	/*display_list(l_dist);*/
 	/*check_every_color_doublon(&qt, &qt, &nb_color);*/
 	/*printf("nb of colors = %d\n", nb_color);*/
 	g_test = qt;
 	MLV_clear_window(MLV_COLOR_BLACK);
 	draw_quadtree(qt, 0, TAILLE_X, 0, TAILLE_Y);
 	MLV_actualise_window();
-	MLV_wait_mouse(0,0);
+	/*MLV_wait_mouse(0, 0);*/
+	/*printf("nombre d'op creation = %d\n", g_nb_op_creation);*/
+	/*printf("nombre d'op parcours = %d\n", g_nb_op_parcours);*/
 	return (0);
 	minimise_perte(img, &(qt->no), &(qt->ne));
 	minimise_perte(img, &(qt->no), &(qt->se));

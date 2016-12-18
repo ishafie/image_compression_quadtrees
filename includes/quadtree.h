@@ -4,7 +4,7 @@
 # define PERTE 6
 # define TAILLE_X 512
 # define TAILLE_Y 512
-# define OP 1000 /* 65536 > 9minutes */
+# define OP 65536 /* 65536 - 45sec */
 # define DISPLAY 0
 # define TRUE 1
 
@@ -12,6 +12,7 @@
 # include <stdlib.h>
 # include <math.h>
 # include <MLV/MLV_all.h>
+# include <pthread.h>
 
 typedef struct			s_zone
 {
@@ -43,12 +44,32 @@ typedef struct			s_list
 {
 	int					processed;
 	struct s_list		*next;
+	struct s_list		*prev;
 	struct s_quadtree	*ptr;
 	double				dist;
 	struct s_zone		zone;
 }						t_list;
 
+typedef struct			s_list_container
+{
+	struct s_list		*first;
+	struct s_list		*last;
+}						t_lc;
+
+typedef struct			s_thread
+{
+	t_qt				**qt;
+	t_lc				**l;
+	MLV_Image			*img;
+	int					x1;
+	int					x2;
+	int					y1;
+	int					y2;
+}						t_thread;
+
 t_qt		*g_test;
+int			g_nb_op_creation;
+int			g_nb_op_parcours;
 
 void		malloc_handling();
 void		err_what(int err);
@@ -63,7 +84,7 @@ double		max(double a, double b);
 int			get_prof(t_qt *qt, int prof);
 void		minimise_prof(t_qt **qt, int nb_color, int max_prof);
 
-void		quadtree_maker2(t_list **l, MLV_Image *img, t_qt **qt, int operations);
+void		quadtree_maker2(t_lc **l, MLV_Image *img, t_qt **qt, int operations);
 
 void		quadtree_maker(MLV_Image *img, t_qt **qt, int operations);
 void		print_every_color_equal(t_qt **qt, t_qt **tmp, MLV_Color, int *nb_color);
@@ -94,8 +115,8 @@ void		encode(t_qt *qt, unsigned char **buf, int *i);
 void		decode(t_qt **qt, unsigned char *code, int *i, int max);
 void		write_in_file(const char *name, const unsigned char *buf, int len);
 
-void		display_list(t_list *l);
-int 		add_order(t_list **l, t_qt *ptr, double dist, t_zone zone);
+void		display_list(t_list *l, t_list *last);
+int 		add_order(t_list **l, t_list **last, t_qt *ptr, double dist, t_zone zone);
 
 void		fill_zone(t_zone *zone, int x1, int x2, int y1, int y2);
 void		print_zone(t_zone z);

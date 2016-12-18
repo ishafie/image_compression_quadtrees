@@ -11,21 +11,22 @@
 # **************************************************************************** #
 
 NAME		=		quadtree
-SRC			=		main.c \
-					image_action.c \
-					quadtree_action.c \
-					quadtree_creation.c \
-					err.c \
-					distance.c \
-					encodage.c \
-					decodage.c \
-					lst_add_order.c \
+SRC			=		main.c				\
+					image_action.c		\
+					quadtree_action.c	\
+					quadtree_creation.c	\
+					err.c			\
+					distance.c		\
+					encodage.c		\
+					decodage.c		\
+					lst_add_order.c	\
+					minimisation.c	\
 
 OBJ_NAME	=		$(SRC:.c=.o)
 OBJ_PATH	=		obj/
 OBJ			=		$(addprefix $(OBJ_PATH), $(OBJ_NAME))
-FLAGS		=		-Wall -Wextra -Werror --ansi --pedantic  -g
-LIB			=		-lMLV -lm
+FLAGS		=		-Wall -Wextra -Werror --ansi --pedantic  -g -D_REENTRANT
+LIB			=		-lMLV -lm -lpthread
 
 .PHONY: all, clean, fclean, re
 
