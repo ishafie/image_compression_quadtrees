@@ -3,6 +3,7 @@
 t_qt		*create_tree(void)
 {
 	t_qt	*new_qt;
+	static unsigned int n_node = 0;
 
 	new_qt = (t_qt*)malloc(sizeof(t_qt));
 	if (!new_qt)
@@ -12,7 +13,9 @@ t_qt		*create_tree(void)
 	new_qt->se = NULL;
 	new_qt->so = NULL;
 	new_qt->dist = -1;
+	new_qt->n_node = n_node;
 	new_qt->color = MLV_COLOR_BLUE;
+	n_node++;
 	return (new_qt);
 }
 
@@ -120,7 +123,7 @@ void 		create_list_and_tree(t_qt **qt, t_lc **l, MLV_Image *img, int x1, int x2,
 
 	(*qt) = create_tree();
 	(*qt)->dist = get_error_dist(img, x1, x2, y1, y2, qt);;
-	if ((*qt)->dist == 0.0 && (x2 - x1) > 1 && (y2 - y1) > 1)
+	if ((*qt)->dist <= 80.0 && (x2 - x1) > 1 && (y2 - y1) > 1) /* pour accelerer la creation meme si perte */
 		return ;
 	fill_zone(&zone, x1, x2, y1, y2);
 	add_order(&(*l)->first, &(*l)->last, (*qt), (*qt)->dist, zone);
@@ -209,22 +212,6 @@ void	go_to_worst(t_lc **l, MLV_Image *img, t_qt **qt, t_zone zone)
 	}
 }*/
 
-t_list	*go_to_not_processed(t_lc **l, t_list **prev)
-{
-	t_list	*tmp;
-
-	tmp = (*l)->first;
-	*prev = NULL;
-	while (tmp)
-	{
-		g_nb_op_parcours++;
-		if (tmp->processed == 0)
-			return tmp;
-		*prev = tmp;
-		tmp = tmp->next;
-	}
-	return NULL;
-}
 
 void	print_zone(t_zone z)
 {
@@ -234,9 +221,12 @@ void	print_zone(t_zone z)
 void	quadtree_maker2(t_lc **l, MLV_Image *img, t_qt **qt, int operations)
 {
 	int		i;
+	int		pct;
+	float	pct_calc;
 	t_zone zone;
 	t_list	*tmp;
 
+	pct = 0;
 	if (!*l)
 		return ;
 	tmp = NULL;
@@ -245,16 +235,15 @@ void	quadtree_maker2(t_lc **l, MLV_Image *img, t_qt **qt, int operations)
 	gen_tree(l, img, qt, zone);
 	if (!*qt)
 		err_what(0);
+	printf("Creation de l'arbre entier...\n");
 	while (i < operations)
 	{
-		/*tmp = go_to_not_processed(l, &prev);
-		if (!tmp)
-			return ;*/
 		if (!(*l)->first)
+		{
+			printf("100%%\n");
 			return ;
+		}
 		go_to_worst(l, img, &((*l)->first->ptr), (*l)->first->zone);
-		/*tmp->processed = 1;*/
-		/*analyze_and_minimize(l, qt);*/
 		if ((*l)->first)
 		{
 			tmp = (*l)->first;
@@ -262,29 +251,19 @@ void	quadtree_maker2(t_lc **l, MLV_Image *img, t_qt **qt, int operations)
 			free(tmp);
 			tmp = NULL;
 		}
-		/*
-		if (prev)
-		{
-			prev->next = tmp->next;
-			free(tmp);
-			tmp = NULL;
-		}
-		else
-		{
-			if ((*l)->first)
-			{
-				tmp = (*l)->first;
-				(*l)->first = (*l)->first->next;
-				free(tmp);
-			}
-		}*/
 		if (DISPLAY == TRUE)
 		{
 			MLV_clear_window(MLV_COLOR_BLACK);
 			draw_quadtree(*qt, 0, TAILLE_X, 0, TAILLE_Y);
 			MLV_actualise_window();
 		}
+		pct_calc = ((float)i / (float)operations) * 100;
+		if (operations != 0 && (int)pct_calc >= pct + 5)
+		{
+			pct = (int)pct_calc;
+			printf("%d%%\n", pct);
+		}
 		i++;
 	}
-
+	printf("100%%\n");
 }

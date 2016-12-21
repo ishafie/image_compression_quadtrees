@@ -82,6 +82,31 @@ void	test_lstorder(t_list *l_dist, t_list *last)
 	display_list(l_dist, last);
 }
 
+void 	parcours_test(t_qt *qt)
+{
+	if (!qt)
+		return ;
+	printf("[%p] - > [%u] -> [%x]\n", (void*)qt, qt->n_node, qt->n_node);
+	printf("\t\t[%u] - [%u] - [%u] - [%u]\n", qt->no ? qt->no->n_node : 0, qt->ne ? qt->ne->n_node : 0, qt->se ? qt->se->n_node : 0, qt->so ? qt->so->n_node : 0);
+	parcours_test(qt->no);
+	parcours_test(qt->ne);
+	parcours_test(qt->se);
+	parcours_test(qt->so);
+}
+
+void 	test_decode_encode_graph(const char *filename)
+{
+	t_qt	*qt;
+
+	decodage(filename, &qt);
+	printf("fin du decodage\n");
+	parcours_test(qt);
+	/*MLV_clear_window(MLV_COLOR_BLACK);
+	draw_quadtree(qt, 0, TAILLE_X, 0, TAILLE_Y);
+	MLV_actualise_window();
+	MLV_wait_mouse(0, 0);*/
+}
+
 void 	*test(void *t)
 {
 	(void)t;
@@ -91,10 +116,10 @@ void 	*test(void *t)
 
 int		main(void)
 {
-	t_qt	*qt;
-	t_lc	*lc;
-	t_list	*l_dist;
-	MLV_Image *img;
+	t_qt				*qt;
+	t_lc				*lc;
+	t_list				*l_dist;
+	MLV_Image 			*img;
 
 	g_nb_op_creation = 0;
 	g_nb_op_parcours = 0;
@@ -108,21 +133,26 @@ int		main(void)
 	/*test_lstorder(lc->first, lc->last);
 	return (0);*/
 	MLV_create_window("QUADTREE", "QUADTREE", TAILLE_X, TAILLE_Y);
-	img = MLV_load_image("img/lion.png");
+	test_decode_encode_graph("angrybird.tgc");
+	return (0);
+	img = MLV_load_image("img/angrybird.png");
 	quadtree_maker2(&lc, img, &qt, OP);
+
+
 	/*display_list(l_dist);*/
 	/*check_every_color_doublon(&qt, &qt, &nb_color);*/
 	/*printf("nb of colors = %d\n", nb_color);*/
 	analyze_and_minimize(&qt);
+	encodage(qt, "angrybird");
 	g_test = qt;
-	MLV_clear_window(MLV_COLOR_BLACK);
+	MLV_clear_window(MLV_COLOR_BLUE);
 	draw_quadtree(qt, 0, TAILLE_X, 0, TAILLE_Y);
 	MLV_actualise_window();
 	MLV_wait_mouse(0, 0);
 	/*printf("nombre d'op creation = %d\n", g_nb_op_creation);*/
 	/*printf("nombre d'op parcours = %d\n", g_nb_op_parcours);*/
 	return (0);
-	minimise_perte(img, &(qt->no), &(qt->ne));
+	/*minimise_perte(img, &(qt->no), &(qt->ne));
 	minimise_perte(img, &(qt->no), &(qt->se));
 	minimise_perte(img, &(qt->no), &(qt->so));
 
@@ -136,14 +166,7 @@ int		main(void)
 
 	minimise_perte(img, &(qt->so), &(qt->no));
 	minimise_perte(img, &(qt->so), &(qt->ne));
-	minimise_perte(img, &(qt->so), &(qt->se));
-
-	MLV_wait_mouse(0, 0);
-	MLV_clear_window(MLV_COLOR_BLACK);
-	draw_quadtree(qt, 0, TAILLE_X, 0, TAILLE_Y);
-	MLV_actualise_window();
-	printf("fin\n");
-	MLV_wait_mouse(0, 0);
+	minimise_perte(img, &(qt->so), &(qt->se));*/
 	/*test_color();
 	MLV_actualise_window();
 	MLV_wait_mouse(0, 0);*/

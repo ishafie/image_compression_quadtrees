@@ -12,7 +12,6 @@ t_list	*ft_lstnew(t_qt *ptr, double dist, t_zone zone)
 		new->next = NULL;
 		new->prev = NULL;
 		fill_zone(&(new->zone), zone.x1, zone.x2, zone.y1, zone.y2);
-		new->processed = 0;
 		return (new);
 	}
 	return (NULL);

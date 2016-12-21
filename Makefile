@@ -15,12 +15,16 @@ SRC			=		main.c				\
 					image_action.c		\
 					quadtree_action.c	\
 					quadtree_creation.c	\
-					err.c			\
-					distance.c		\
-					encodage.c		\
-					decodage.c		\
-					lst_add_order.c	\
-					minimisation.c	\
+					err.c				\
+					distance.c			\
+					encodage.c			\
+					decodage.c			\
+					lst_add_order.c		\
+					minimisation.c		\
+					encodage_graph.c	\
+					decodage_graph.c	\
+					list_encoding.c		\
+					get_next_line.c		\
 
 OBJ_NAME	=		$(SRC:.c=.o)
 OBJ_PATH	=		obj/

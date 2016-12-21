@@ -27,7 +27,7 @@ void 	compare_tree(t_qt **qt, t_qt **cmp)
 	if (*qt && *cmp && color_equal((*qt)->color, (*cmp)->color, 50))
 	{
 		dist = distance_two_inner_tree(qt, cmp);
-		if (dist < 20)
+		if (dist < 10)
 		{
 			i++;
 			delete_inner_tree(qt, cmp);
@@ -54,22 +54,31 @@ void 	mini_with_loss(t_qt **racine, t_qt **qt)
 
 void 	analyze_and_minimize(t_qt **qt)
 {
+	printf("Minimisation en cours...\n");
 	if (!*qt)
 		return ;
 	mini_with_loss(&(*qt)->no, &(*qt)->ne);
+	printf("8%%\n");
 	mini_with_loss(&(*qt)->no, &(*qt)->se);
+	printf("16%%\n");
 	mini_with_loss(&(*qt)->no, &(*qt)->so);
-
+	printf("25%%\n");
 	mini_with_loss(&(*qt)->ne, &(*qt)->no);
+	printf("33%%\n");
 	mini_with_loss(&(*qt)->ne, &(*qt)->se);
+	printf("42%%\n");
 	mini_with_loss(&(*qt)->ne, &(*qt)->so);
-
+	printf("50%%\n");
 	mini_with_loss(&(*qt)->se, &(*qt)->no);
+	printf("58%%\n");
 	mini_with_loss(&(*qt)->se, &(*qt)->ne);
+	printf("67%%\n");
 	mini_with_loss(&(*qt)->se, &(*qt)->so);
-
+	printf("75%%\n");
 	mini_with_loss(&(*qt)->so, &(*qt)->no);
+	printf("83%%\n");
 	mini_with_loss(&(*qt)->so, &(*qt)->ne);
+	printf("92%%\n");
 	mini_with_loss(&(*qt)->so, &(*qt)->se);
-
+	printf("100%%\n");
 }

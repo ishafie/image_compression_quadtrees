@@ -4,15 +4,20 @@
 # define PERTE 6
 # define TAILLE_X 512
 # define TAILLE_Y 512
-# define OP 10000 /* 65536 - 45sec */
+# define OP 5000 /* 65536 - 45sec */
 # define DISPLAY 0
 # define TRUE 1
 
 # include <stdio.h>
 # include <stdlib.h>
+# include <unistd.h>
+# include <fcntl.h>
+# include <string.h>
 # include <math.h>
 # include <MLV/MLV_all.h>
 # include <pthread.h>
+
+enum {WHAT, FILE_ISSUE};
 
 typedef struct			s_zone
 {
@@ -36,13 +41,13 @@ typedef struct			s_quadtree
 	struct s_quadtree	*ne;
 	struct s_quadtree	*se;
 	struct s_quadtree	*so;
+	unsigned int		n_node;
 	double				dist;
 	MLV_Color			color;
 }						t_qt;
 
 typedef struct			s_list
 {
-	int					processed;
 	struct s_list		*next;
 	struct s_list		*prev;
 	struct s_quadtree	*ptr;
@@ -55,6 +60,13 @@ typedef struct			s_list_container
 	struct s_list		*first;
 	struct s_list		*last;
 }						t_lc;
+
+typedef struct					s_list_encoding
+{
+	struct s_list_encoding		*next;
+	struct s_quadtree			*ptr;
+	unsigned int				n_node;
+}								t_le;
 
 typedef struct			s_thread
 {
@@ -110,6 +122,16 @@ double		get_dist_final(t_qt **a, t_qt **b);
 int			is_no_leaf(t_qt *a);
 void		free_tree(t_qt **qt);
 int			is_part_of(t_qt *a, t_qt *b);
+
+
+void 		encodage(t_qt *qt, const char *name);
+void 		encode_graph(t_qt *qt, FILE *f);
+
+void 		decodage(const char *filename, t_qt **qt);
+void 		decode_graph(t_qt **qt, int fd, t_le **l);
+
+int			add_node_to_le(unsigned int n, t_le **l, t_qt *ptr);
+t_qt		*search_node(unsigned int n, t_le **l);
 
 void		encode(t_qt *qt, unsigned char **buf, int *i);
 void		decode(t_qt **qt, unsigned char *code, int *i, int max);
