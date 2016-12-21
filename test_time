@@ -1,0 +1,104 @@
+ORIGINAL LION TGC :
+701,281 bytes
+
+ORIGINAL ANGRYBIRD TGC :
+699,932 bytes
+=============================
+MINI LION TGC :
+648,670 bytes avec 100 de dist
+262 000 avec 10 de dist
+
+
+essayer de convertir en hex
+
+ 943,901
+-> 943 721
+
+943,901
+->
+
+
+
+
+
+
+
+
+real	2m5.612s
+user	1m51.292s
+sys	0m0.164s
+(20 000)
+
+
+real	2m1.440s
+user	1m59.964s
+sys	0m0.172s
+(20 000)
+
+
+after modifications:
+real 0m52.642s
+user 0m51.984s
+sys  0m096s
+========
+old (20 000):
+real	0m59.149s
+user	0m57.692s
+sys	0m0.244s
+
+real	0m57.250s
+user	0m56.140s
+sys	0m0.176s
+
+
+/*============ THREAD ===============*/
+/*
+fill_thread_args(&args[0], &((*qt)->no), l, img, save.x1, d(save.x1, save.x2), save.y1, d(save.y1, save.y2));
+fill_thread_args(&args[1], &((*qt)->ne), l, img, d(save.x1, save.x2), save.x2, save.y1, d(save.y1, save.y2));
+fill_thread_args(&args[2], &((*qt)->se), l, img, d(save.x1, save.x2), save.x2, d(save.y1, save.y2), save.y2);
+fill_thread_args(&args[3], &((*qt)->so), l, img, save.x1, d(save.x1, save.x2), d(save.y1, save.y2), save.y2);
+if (!(*qt)->no)
+{
+	if (pthread_create(&thread_store[nb_thread], NULL, create_list_and_tree_thread, (void*)&args[0]))
+		exit(EXIT_FAILURE);
+	nb_thread++;
+}
+if (!(*qt)->ne)
+{
+	if (pthread_create(&thread_store[nb_thread], NULL, create_list_and_tree_thread, (void*)&args[1]))
+		exit(EXIT_FAILURE);
+	nb_thread++;
+}
+if (!(*qt)->se)
+{
+	if (pthread_create(&thread_store[nb_thread], NULL, create_list_and_tree_thread, (void*)&args[2]))
+		exit(EXIT_FAILURE);
+	nb_thread++;
+}
+if (!(*qt)->so)
+{
+	if (pthread_create(&thread_store[nb_thread], NULL, create_list_and_tree_thread, (void*)&args[3]))
+		exit(EXIT_FAILURE);
+	nb_thread++;
+}
+join_thread(thread_store, nb_thread);
+if ((*qt)->no)
+{
+	fill_zone(&zone, save.x1, d(save.x1, save.x2), save.y1, d(save.y1, save.y2));
+	add_order(&(*l)->first, &(*l)->last, (*qt)->no, (*qt)->no->dist, zone);
+}
+if ((*qt)->ne)
+{
+	fill_zone(&zone, d(save.x1, save.x2), save.x2, save.y1, d(save.y1, save.y2));
+	add_order(&(*l)->first, &(*l)->last, (*qt)->ne, (*qt)->ne->dist, zone);
+}
+if ((*qt)->se)
+{
+	fill_zone(&zone, d(save.x1, save.x2), save.x2, d(save.y1, save.y2), save.y2);
+	add_order(&(*l)->first, &(*l)->last, (*qt)->se, (*qt)->se->dist, zone);
+}
+if ((*qt)->so)
+{
+	fill_zone(&zone, save.x1, d(save.x1, save.x2), d(save.y1, save.y2), save.y2);
+	add_order(&(*l)->first, &(*l)->last, (*qt)->so, (*qt)->so->dist, zone);
+}*/

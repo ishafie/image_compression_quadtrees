@@ -11,6 +11,7 @@ void 		decodage(const char *filename, t_qt **qt)
 	if (fd == -1)
 		err_what(FILE_ISSUE);
 	decode_graph(qt, fd, &l);
+	close(fd);
 }
 
 int 		get_node(const char *line, char n_node[16], int *i, char *pos)
@@ -57,7 +58,6 @@ void 		search_or_create(t_qt **tree, const char n_node[16], t_le **l, char pos)
 		(*qt)->n_node = n;
 		add_node_to_le(n, l, *qt);
 	}
-	printf("[%p]\n", (void*)(*qt));
 }
 
 void 		create_node_from_line(t_qt **qt, const char *line, t_le **l)
@@ -147,6 +147,7 @@ void 		create_leaf_from_line(t_qt **qt, const char *line, t_le **l)
 		(*qt)->n_node = n;
 		add_node_to_le(n, l, *qt);
 	}
+	(*qt)->n_node = n;
 	get_color(line, color, &i);
 	n = (int)strtol(color, NULL, 16);
 	c.red = n;
@@ -160,8 +161,6 @@ void 		create_leaf_from_line(t_qt **qt, const char *line, t_le **l)
 	n = (int)strtol(color, NULL, 16);
 	c.alpha = n;
 	(*qt)->color = MLV_convert_rgba_to_color(c.red, c.green, c.blue, c.alpha);
-	/*printf("[%p] -> (%d, %d, %d)\n", (void*)(*qt), c.red, c.green, c.blue);
-	exit(1);*/
 }
 
 void 		decode_graph(t_qt **qt, int fd, t_le **l)
@@ -170,18 +169,18 @@ void 		decode_graph(t_qt **qt, int fd, t_le **l)
 
 	line = NULL;
 	if (get_next_line(fd, &line) <= 0)
-	{
-		close(fd);
 		return ;
-	}
-	printf("line = %s\n", line);
 	if (strchr(line, ':'))
 		create_node_from_line(qt, line, l);
 	else
 		create_leaf_from_line(qt, line, l);
 	free(line);
-	decode_graph(&(*qt)->no, fd, l);
-	decode_graph(&(*qt)->ne, fd, l);
-	decode_graph(&(*qt)->se, fd, l);
-	decode_graph(&(*qt)->so, fd, l);
+	if ((*qt)->no)
+		decode_graph(&(*qt)->no, fd, l);
+	if ((*qt)->ne)
+		decode_graph(&(*qt)->ne, fd, l);
+	if ((*qt)->se)
+		decode_graph(&(*qt)->se, fd, l);
+	if ((*qt)->so)
+		decode_graph(&(*qt)->so, fd, l);
 }

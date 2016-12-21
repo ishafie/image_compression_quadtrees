@@ -100,18 +100,11 @@ void 	test_decode_encode_graph(const char *filename)
 
 	decodage(filename, &qt);
 	printf("fin du decodage\n");
-	parcours_test(qt);
-	/*MLV_clear_window(MLV_COLOR_BLACK);
+	MLV_wait_mouse(0, 0);
+	MLV_clear_window(MLV_COLOR_BLACK);
 	draw_quadtree(qt, 0, TAILLE_X, 0, TAILLE_Y);
 	MLV_actualise_window();
-	MLV_wait_mouse(0, 0);*/
-}
-
-void 	*test(void *t)
-{
-	(void)t;
-	printf("ok\n");
-	return NULL;
+	MLV_wait_mouse(0, 0);
 }
 
 int		main(void)
@@ -123,53 +116,20 @@ int		main(void)
 
 	g_nb_op_creation = 0;
 	g_nb_op_parcours = 0;
-	/*int		nb_color;
-	nb_color = 0;*/
 	lc = (t_lc*)malloc(sizeof(t_lc));
 	l_dist = NULL;
 	lc->first = l_dist;
 	lc->last = l_dist;
 	qt = NULL;
-	/*test_lstorder(lc->first, lc->last);
-	return (0);*/
 	MLV_create_window("QUADTREE", "QUADTREE", TAILLE_X, TAILLE_Y);
-	test_decode_encode_graph("angrybird.tgc");
-	return (0);
-	img = MLV_load_image("img/angrybird.png");
+	img = MLV_load_image("img/lion.png");
 	quadtree_maker2(&lc, img, &qt, OP);
-
-
-	/*display_list(l_dist);*/
-	/*check_every_color_doublon(&qt, &qt, &nb_color);*/
-	/*printf("nb of colors = %d\n", nb_color);*/
 	analyze_and_minimize(&qt);
-	encodage(qt, "angrybird");
-	g_test = qt;
+	encodage(qt, "lion");
 	MLV_clear_window(MLV_COLOR_BLUE);
 	draw_quadtree(qt, 0, TAILLE_X, 0, TAILLE_Y);
 	MLV_actualise_window();
 	MLV_wait_mouse(0, 0);
-	/*printf("nombre d'op creation = %d\n", g_nb_op_creation);*/
-	/*printf("nombre d'op parcours = %d\n", g_nb_op_parcours);*/
-	return (0);
-	/*minimise_perte(img, &(qt->no), &(qt->ne));
-	minimise_perte(img, &(qt->no), &(qt->se));
-	minimise_perte(img, &(qt->no), &(qt->so));
-
-	minimise_perte(img, &(qt->ne), &(qt->no));
-	minimise_perte(img, &(qt->ne), &(qt->se));
-	minimise_perte(img, &(qt->ne), &(qt->so));
-
-	minimise_perte(img, &(qt->se), &(qt->no));
-	minimise_perte(img, &(qt->se), &(qt->ne));
-	minimise_perte(img, &(qt->se), &(qt->so));
-
-	minimise_perte(img, &(qt->so), &(qt->no));
-	minimise_perte(img, &(qt->so), &(qt->ne));
-	minimise_perte(img, &(qt->so), &(qt->se));*/
-	/*test_color();
-	MLV_actualise_window();
-	MLV_wait_mouse(0, 0);*/
 	MLV_free_window();
 	return (0);
 }

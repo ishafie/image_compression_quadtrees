@@ -4,7 +4,7 @@
 # define PERTE 6
 # define TAILLE_X 512
 # define TAILLE_Y 512
-# define OP 5000 /* 65536 - 45sec */
+# define OP 10000 /* 65536 - 45sec */
 # define DISPLAY 0
 # define TRUE 1
 
@@ -85,6 +85,8 @@ int			g_nb_op_parcours;
 
 void		malloc_handling();
 void		err_what(int err);
+
+void 		parcours_test(t_qt *qt);
 
 int			cmp_tree(t_qt **qt, t_qt **paire);
 
