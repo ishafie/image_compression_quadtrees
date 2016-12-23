@@ -24,44 +24,33 @@ void	test_color(void)
 	}
 }
 
-void		test_decode_encode(t_qt *qt)
+void 	test_decode(void)
 {
-	int		i;
-	int		len;
+	FILE	*fp;
 	t_qt	*tree;
-	unsigned char	*buf;
 
-	i = 0;
-	len = count_node(qt);
-	printf("%d\n", len);
 	tree = NULL;
-	buf = (unsigned char*)malloc(sizeof(unsigned char) * (len * 200));
-	if (!buf)
-		malloc_handling();
-	while (i < len + 1)
-		buf[i++] = 0;
-	i = 0;
-	encode(qt, &buf, &i);
-	len = i;
-	i = 0;
-	while (i < len)
-	{
-		(void)buf;
-		i++;
-	}
-	i = 0;
-	printf("\n\n\n");
-	decode(&tree, buf, &i, len);
+	fp = fopen("test", "rb");
+	if (!fp)
+		err_what(FILE_ISSUE);
+	decode(&tree, fp);
+	fclose(fp);
 	printf("\n");
-	draw_quadtree(qt, 0, TAILLE_X, 0, TAILLE_Y);
-	MLV_actualise_window();
-	MLV_wait_mouse(0, 0);
-	MLV_clear_window(MLV_COLOR_BLACK);
-	MLV_actualise_window();
 	draw_quadtree(tree, 0, TAILLE_X, 0, TAILLE_Y);
 	MLV_actualise_window();
 	MLV_wait_mouse(0, 0);
-	write_in_file("lion", buf, len);
+}
+
+void 	test_encode(t_qt *qt)
+{
+	FILE	*fp;
+
+	fp = fopen("test", "wb");
+	if (!fp)
+		err_what(FILE_ISSUE);
+	encode(qt, fp);
+	fclose(fp);
+	printf("\n\n\n");
 }
 
 void	test_lstorder(t_list *l_dist, t_list *last)
@@ -113,23 +102,26 @@ int		main(void)
 	t_lc				*lc;
 	t_list				*l_dist;
 	MLV_Image 			*img;
+	char				*filename;
 
 	g_nb_op_creation = 0;
 	g_nb_op_parcours = 0;
-	lc = (t_lc*)malloc(sizeof(t_lc));
 	l_dist = NULL;
-	lc->first = l_dist;
-	lc->last = l_dist;
+	lc = create_list_container(l_dist);
 	qt = NULL;
 	MLV_create_window("QUADTREE", "QUADTREE", TAILLE_X, TAILLE_Y);
-	img = MLV_load_image("img/lion.png");
-	quadtree_maker2(&lc, img, &qt, OP);
-	analyze_and_minimize(&qt);
-	encodage(qt, "lion");
+	filename = start_screen();
+	printf("filename = %s\n", filename);
 	MLV_clear_window(MLV_COLOR_BLUE);
-	draw_quadtree(qt, 0, TAILLE_X, 0, TAILLE_Y);
-	MLV_actualise_window();
+	img = MLV_load_image(filename);
+	quadtree_maker2(&lc, img, &qt, OP);
+	create_interface(qt);
+	click_interface(&qt, filename);
+	/*analyze_and_minimize(&qt);
+	encodage(qt, "lion");*/
+	printf("Fin.\n");
 	MLV_wait_mouse(0, 0);
+	free(filename);
 	MLV_free_window();
 	return (0);
 }

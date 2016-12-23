@@ -25,6 +25,11 @@ SRC			=		main.c				\
 					decodage_graph.c	\
 					list_encoding.c		\
 					get_next_line.c		\
+					img_folder.c		\
+					interface.c			\
+					interface_draw.c	\
+					interface_click.c	\
+					check_extension.c	\
 
 OBJ_NAME	=		$(SRC:.c=.o)
 OBJ_PATH	=		obj/

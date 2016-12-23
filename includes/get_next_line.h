@@ -16,7 +16,6 @@
 
 int						get_next_line(int const fd, char **line);
 void					*ft_memalloc(size_t size);
-char					*ft_strdup(const char *s1);
 
 typedef struct			s_struct
 {

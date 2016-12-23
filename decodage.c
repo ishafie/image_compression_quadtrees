@@ -1,6 +1,6 @@
 #include "includes/quadtree.h"
 
-uint8_t     convert_to_dec(unsigned char *buf, int nb, int len)
+uint8_t     convert_to_dec(FILE *fp)
 {
     char        bin[8];
     char        *binPtr;
@@ -8,12 +8,11 @@ uint8_t     convert_to_dec(unsigned char *buf, int nb, int len)
     int         total;
 
     total = 0;
-    i = nb - 8;
-    while (i < nb && i < len)
+	i = 0;
+    while (i < 8)
     {
-        /*printf("nb = %d et i = %d final = %d\n", nb, i, i - nb + 8);*/
-        bin[i - nb + 8] = buf[i];
-        printf("%d", buf[i]);
+		fread(&bin[i], 1, 1, fp);
+		printf("%d", bin[i]);
         i++;
     }
     i = 0;
@@ -25,50 +24,89 @@ uint8_t     convert_to_dec(unsigned char *buf, int nb, int len)
             total += 1;
         i++;
     }
-/*    printf("%ld\n", strtol(bin, 0, 2));*/
     return ((uint8_t)total);
 }
 
-t_color	   start_gen_color(unsigned char *code, int *i, int len)
+t_color	   start_gen_color(FILE *fp)
 {
     t_color color;
 
-    color.red = convert_to_dec(code, *i + 8, len);
+    color.red = convert_to_dec(fp);
     printf("][");
-    color.green = convert_to_dec(code, *i + 16, len);
+    color.green = convert_to_dec(fp);
     printf("][");
-    color.blue = convert_to_dec(code, *i + 24, len);
+    color.blue = convert_to_dec(fp);
     printf("][");
-    color.alpha = convert_to_dec(code, *i + 32, len);
-    *i += 32;
+    color.alpha = convert_to_dec(fp);
     return (color);
 }
 
-void       decode(t_qt **qt, unsigned char *code, int *i, int max)
+void       decode(t_qt **qt, FILE *fp)
 {
     t_color color;
+	char	c;
 
-    if (*i >= max || !code)
+    if (feof(fp))
+	{
+		printf("fin\n");
         return ;
+	}
+	fread(&c, 1, 1, fp);
     *qt = create_tree();
-	if (code[*i] == 0)
+	if (c == 0)
     {
         printf("0");
-        *i += 1;
-        decode(&(*qt)->no, code, i, max);
-        decode(&(*qt)->ne, code, i, max);
-        decode(&(*qt)->se, code, i, max);
-        decode(&(*qt)->so, code, i, max);
+        decode(&(*qt)->no, fp);
+        decode(&(*qt)->ne, fp);
+        decode(&(*qt)->se, fp);
+        decode(&(*qt)->so, fp);
     }
     else
     {
 
         printf("1[");
-        *i += 1;
-        color = start_gen_color(code, i, max);
+        color = start_gen_color(fp);
         (*qt)->color = MLV_convert_rgba_to_color(color.red, color.green, color.blue, color.alpha);
-        printf("] i = %d et max = %d\n", *i, max);
+		printf("]\n");
         return ;
     }
+}
 
+MLV_Color	gen_black_or_white(FILE *fp)
+{
+	char	c;
+
+	fread(&c, 1, 1, fp);
+	if (c == 0)
+		return (MLV_COLOR_BLACK);
+	return (MLV_COLOR_WHITE);
+}
+
+void       	decode_bin_nocolor(t_qt **qt, FILE *fp)
+{
+	char	c;
+
+    if (feof(fp))
+	{
+		printf("fin\n");
+        return ;
+	}
+	fread(&c, 1, 1, fp);
+    *qt = create_tree();
+	printf("c = %d\n", c);
+	if (c == 0)
+    {
+        printf("0");
+        decode(&(*qt)->no, fp);
+        decode(&(*qt)->ne, fp);
+        decode(&(*qt)->se, fp);
+        decode(&(*qt)->so, fp);
+    }
+    else
+    {
+        printf("1[");
+        (*qt)->color = gen_black_or_white(fp);
+		printf("]\n");
+        return ;
+    }
 }

@@ -1,40 +1,16 @@
 #include "includes/quadtree.h"
 
-void	   write_in_file(const char *name, const unsigned char *buf, int len)
-{
-    FILE *fp;
-    char *filename;
-    int     i;
-    int     filelen;
-
-    filelen = strlen(name) + 5;
-    i = 0;
-    filename = (char*)malloc(sizeof(char) * filelen);
-    if (!filename)
-        malloc_handling();
-    while (i < filelen)
-    {
-        filename[i] = 0;
-        i++;
-    }
-    strcpy(filename, name);
-    strcat(filename, ".tgc");
-    fp = fopen(name, "wb");
-    if (!fp)
-        malloc_handling();
-    fwrite(buf, sizeof(char), len, fp);
-}
-
-void       convert_to_bin(uint8_t c, unsigned char **buf, int *i)
+static void       convert_to_bin(uint8_t c, FILE *fp)
 {
     int     index;
+	char	b;
 
     index = 7;
     while (index >= 0)
     {
-        (*buf)[*i] = (c | (1u << index)) == c;
-        printf("%d", (*buf)[*i]);
-        *i += 1;
+		b = (c | (1u << index)) == c;
+		fwrite(&b, 1, 1, fp);
+        printf("%d", (c | (1u << index)) == c);
         index--;
     }
 }
@@ -46,40 +22,127 @@ int        black_or_white(MLV_Color color)
     return (0);
 }
 
-void        convert_to_bin_rgba(MLV_Color color, unsigned char **buf, int *i)
+static void        convert_to_bin_rgba(MLV_Color color, FILE *fp)
 {
     t_color c;
 
     MLV_Color_to_color(color, &c);
-    convert_to_bin(c.red, buf, i);
+    convert_to_bin(c.red, fp);
     printf("][");
-    convert_to_bin(c.green, buf, i);
+    convert_to_bin(c.green, fp);
     printf("][");
-    convert_to_bin(c.blue, buf, i);
+    convert_to_bin(c.blue, fp);
     printf("][");
-    convert_to_bin(c.alpha, buf, i);
+    convert_to_bin(c.alpha, fp);
 }
 
-void        encode(t_qt *qt, unsigned char **buf, int *i)
+void        encode(t_qt *qt, FILE *fp)
 {
+	char	c;
+
     if (!qt)
         return ;
     if (!is_leaf(qt))
     {
-        (*buf)[*i] = 0;
+		c = 0;
+		fwrite(&c, 1, 1, fp);
         printf("0");
-        *i = *i + 1;
     }
     else
     {
-        (*buf)[*i] = 1;
-        *i = *i + 1;
+		c = 1;
+		fwrite(&c, 1, 1, fp);
         printf("1[");
-        convert_to_bin_rgba(qt->color, buf, i);
-        printf("] i = %d\n", *i);
+        convert_to_bin_rgba(qt->color, fp);
+        printf("]\n");
     }
-    encode(qt->no, buf, i);
-    encode(qt->ne, buf, i);
-    encode(qt->se, buf, i);
-    encode(qt->so, buf, i);
+    encode(qt->no, fp);
+    encode(qt->ne, fp);
+    encode(qt->se, fp);
+    encode(qt->so, fp);
+}
+
+void        encode_nocolor(t_qt *qt, FILE *fp)
+{
+	char	c;
+
+    if (!qt)
+        return ;
+    if (!is_leaf(qt))
+    {
+		c = 0;
+		fwrite(&c, 1, 1, fp);
+        printf("0");
+    }
+    else
+    {
+		c = 1;
+		fwrite(&c, 1, 1, fp);
+        printf("1[");
+		if (color_equal(MLV_COLOR_BLACK, qt->color, 50))
+		{
+			c = 0;
+			fwrite(&c, 1, 1, fp);
+		}
+		else
+			fwrite(&c, 1, 1, fp);
+        printf("]\n");
+    }
+    encode(qt->no, fp);
+    encode(qt->ne, fp);
+    encode(qt->se, fp);
+    encode(qt->so, fp);
+}
+
+char		*add_ext_to_filename(const char *file, const char *ext)
+{
+	int		len;
+	int		i;
+	char	*ret;
+
+	i = 0;
+	if (!file)
+		return (ft_strdup("no_name"));
+	len = strlen(file);
+	ret = (char*)malloc(sizeof(char) * (len + strlen(ext) + 1));
+	if (!ret)
+		malloc_handling();
+	while (len && file[len] != '.')
+		len--;
+	if (!len || !ext)
+		exit(1);
+	while (file[i] && i < len)
+	{
+		ret[i] = file[i];
+		i++;
+	}
+	len = i;
+	i = 0;
+	while (ext[i])
+	{
+		ret[len + i] = ext[i];
+		i++;
+	}
+	ret[len + i] = 0;
+	return (ret);
+}
+
+void 		encode_bin(t_qt *qt, const char *filename, int color)
+{
+	char	*out;
+	FILE	*fp;
+
+	if (color == COLOR)
+		out = add_ext_to_filename(filename, ".qtc");
+	else
+		out = add_ext_to_filename(filename, ".qtn");
+	fp = fopen(out, "wb");
+	if (!fp)
+		err_what(FILE_ISSUE);
+	if (color == COLOR)
+		encode(qt, fp);
+	else
+		encode_nocolor(qt, fp);
+	free(out);
+	fclose(fp);
 }

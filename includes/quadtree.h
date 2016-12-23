@@ -11,13 +11,16 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <unistd.h>
+# include <sys/types.h>
+# include <sys/stat.h>
 # include <fcntl.h>
 # include <string.h>
+# include <dirent.h>
 # include <math.h>
 # include <MLV/MLV_all.h>
 # include <pthread.h>
 
-enum {WHAT, FILE_ISSUE};
+enum {WHAT, FILE_ISSUE, IMG_NOT_FOUND, COLOR, NOCOLOR};
 
 typedef struct			s_zone
 {
@@ -88,6 +91,9 @@ void		err_what(int err);
 
 void 		parcours_test(t_qt *qt);
 
+char		*ft_strdup(const char *s1);
+
+
 int			cmp_tree(t_qt **qt, t_qt **paire);
 
 double		dist(t_color px, t_color moy);
@@ -99,6 +105,7 @@ int			get_prof(t_qt *qt, int prof);
 void		minimise_prof(t_qt **qt, int nb_color, int max_prof);
 
 void		quadtree_maker2(t_lc **l, MLV_Image *img, t_qt **qt, int operations);
+void 		delete_tree(t_qt **qt);
 
 void		quadtree_maker(MLV_Image *img, t_qt **qt, int operations);
 void		print_every_color_equal(t_qt **qt, t_qt **tmp, MLV_Color, int *nb_color);
@@ -125,30 +132,41 @@ int			is_no_leaf(t_qt *a);
 void		free_tree(t_qt **qt);
 int			is_part_of(t_qt *a, t_qt *b);
 
-
-void 		encodage(t_qt *qt, const char *name);
+void 		encode_bin(t_qt *qt, const char *filename, int color);
+char		*add_ext_to_filename(const char *file, const char *ext);
+void 		encodage_graph(t_qt *qt, const char *name);
 void 		encode_graph(t_qt *qt, FILE *f);
 
 void 		decodage(const char *filename, t_qt **qt);
+void       	decode_bin_nocolor(t_qt **qt, FILE *fp);
 void 		decode_graph(t_qt **qt, int fd, t_le **l);
 
 int			add_node_to_le(unsigned int n, t_le **l, t_qt *ptr);
 t_qt		*search_node(unsigned int n, t_le **l);
 
-void		encode(t_qt *qt, unsigned char **buf, int *i);
-void		decode(t_qt **qt, unsigned char *code, int *i, int max);
+void		encode(t_qt *qt, FILE *fp);
+void		decode(t_qt **qt, FILE *fp);
 void		write_in_file(const char *name, const unsigned char *buf, int len);
 
 void		display_list(t_list *l, t_list *last);
 int 		add_order(t_list **l, t_list **last, t_qt *ptr, double dist, t_zone zone);
+t_lc		*create_list_container(t_list *l_dist);
 
 void		fill_zone(t_zone *zone, int x1, int x2, int y1, int y2);
 void		print_zone(t_zone z);
 
 
+char		*start_screen(void);
+void 		create_interface(t_qt *qt);
+void 		draw_interface(MLV_Font *font);
+void 		click_interface(t_qt **qt, char *filename);
+void 		open_img(t_qt **qt, char **filename, int *mini);
+int			is_img(char *str);
 
 void	free_tree(t_qt **qt);
 void 	analyze_and_minimize(t_qt **qt);
 double	distance_two_inner_tree(t_qt **a, t_qt **b);
+
+int			is_qtn(const char *str);
 
 #endif

@@ -15,6 +15,8 @@ void	err_what(int err)
 		break;
 		case 1:
 		fprintf(stderr, "Impossible de creer ou de modifier le fichier.\n");
+		case 2:
+		fprintf(stderr, "Image inaccessible\n");
 		break;
 	}
 	exit(EXIT_FAILURE);

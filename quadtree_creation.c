@@ -267,3 +267,15 @@ void	quadtree_maker2(t_lc **l, MLV_Image *img, t_qt **qt, int operations)
 	}
 	printf("100%%\n");
 }
+
+void 		delete_tree(t_qt **qt)
+{
+	if (!*qt)
+		return ;
+	delete_tree(&(*qt)->no);
+	delete_tree(&(*qt)->ne);
+	delete_tree(&(*qt)->se);
+	delete_tree(&(*qt)->so);
+	free(*qt);
+	*qt = NULL;
+}

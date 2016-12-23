@@ -1,5 +1,17 @@
 #include "includes/quadtree.h"
 
+t_lc	*create_list_container(t_list *l_dist)
+{
+	t_lc	*new;
+
+	new = (t_lc*)malloc(sizeof(t_lc));
+	if (!new)
+		malloc_handling();
+	new->first = l_dist;
+	new->last = l_dist;
+	return (new);
+}
+
 t_list	*ft_lstnew(t_qt *ptr, double dist, t_zone zone)
 {
 	t_list	*new;

@@ -1,28 +1,17 @@
 #include "includes/quadtree.h"
 
-void 		encodage(t_qt *qt, const char *name)
+void 		encodage_graph(t_qt *qt, const char *name)
 {
 	FILE 			*fp;
     char 			*filename;
-    unsigned int    i;
-    unsigned int   	filelen;
 
-    filelen = strlen(name) + 5;
-    i = 0;
-    filename = (char*)malloc(sizeof(char) * filelen);
-    if (!filename)
-        malloc_handling();
-    while (i < filelen)
-    {
-        filename[i] = 0;
-        i++;
-    }
-    strcpy(filename, name);
-    strcat(filename, ".tgc");
+	filename = add_ext_to_filename(name, ".gmc");
     fp = fopen(filename, "w");
     if (!fp)
         err_what(FILE_ISSUE);
 	encode_graph(qt, fp);
+	free(filename);
+	fclose(fp);
 }
 
 void 		print_delimiter_if_necessary(FILE *fp, t_qt *a, t_qt *b, t_qt *c)
