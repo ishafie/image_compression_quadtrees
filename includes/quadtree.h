@@ -134,18 +134,20 @@ int			is_part_of(t_qt *a, t_qt *b);
 
 void 		encode_bin(t_qt *qt, const char *filename, int color);
 char		*add_ext_to_filename(const char *file, const char *ext);
-void 		encodage_graph(t_qt *qt, const char *name);
+void 		encodage_graph(t_qt *qt, const char *name, int color);
 void 		encode_graph(t_qt *qt, FILE *f);
 
-void 		decodage(const char *filename, t_qt **qt);
+void 		decodage(const char *filename, t_qt **qt, int color);
 void       	decode_bin_nocolor(t_qt **qt, FILE *fp);
 void 		decode_graph(t_qt **qt, int fd, t_le **l);
+void 		decode_graph_nocolor(t_qt **qt, int fd, t_le **l);
 
 int			add_node_to_le(unsigned int n, t_le **l, t_qt *ptr);
 t_qt		*search_node(unsigned int n, t_le **l);
 
 void		encode(t_qt *qt, FILE *fp);
-void		decode(t_qt **qt, FILE *fp);
+void 		encode_graph_nocolor(t_qt *qt, FILE *fp);
+void		decode_bin(t_qt **qt, FILE *fp);
 void		write_in_file(const char *name, const unsigned char *buf, int len);
 
 void		display_list(t_list *l, t_list *last);
@@ -161,12 +163,15 @@ void 		create_interface(t_qt *qt);
 void 		draw_interface(MLV_Font *font);
 void 		click_interface(t_qt **qt, char *filename);
 void 		open_img(t_qt **qt, char **filename, int *mini);
-int			is_img(char *str);
 
 void	free_tree(t_qt **qt);
 void 	analyze_and_minimize(t_qt **qt);
 double	distance_two_inner_tree(t_qt **a, t_qt **b);
 
 int			is_qtn(const char *str);
+int			is_qtc(const char *str);
+int			is_img(char *str);
+int			is_gmc(const char *str);
+int			is_gmn(const char *str);
 
 #endif

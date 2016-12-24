@@ -12,6 +12,42 @@ int		is_qtn(const char *str)
 	return (0);
 }
 
+int		is_gmn(const char *str)
+{
+	int		len;
+
+	if (!str)
+		return (0);
+	len = strlen(str);
+	if (len - 4 > 1 && strcmp(str + (len - 4), ".gmn") == 0)
+		return (1);
+	return (0);
+}
+
+int		is_gmc(const char *str)
+{
+	int		len;
+
+	if (!str)
+		return (0);
+	len = strlen(str);
+	if (len - 4 > 1 && strcmp(str + (len - 4), ".gmc") == 0)
+		return (1);
+	return (0);
+}
+
+int		is_qtc(const char *str)
+{
+	int		len;
+
+	if (!str)
+		return (0);
+	len = strlen(str);
+	if (len - 4 > 1 && strcmp(str + (len - 4), ".qtc") == 0)
+		return (1);
+	return (0);
+}
+
 int		is_img(char *str)
 {
 	int		len;

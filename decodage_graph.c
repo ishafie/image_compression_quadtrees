@@ -1,7 +1,7 @@
 #include "includes/quadtree.h"
 #include "includes/get_next_line.h"
 
-void 		decodage(const char *filename, t_qt **qt)
+void 		decodage(const char *filename, t_qt **qt, int color)
 {
 	int				fd;
 	t_le			*l;
@@ -10,7 +10,10 @@ void 		decodage(const char *filename, t_qt **qt)
 	fd = open(filename, O_RDONLY);
 	if (fd == -1)
 		err_what(FILE_ISSUE);
-	decode_graph(qt, fd, &l);
+	if (color == COLOR)
+		decode_graph(qt, fd, &l);
+	else
+		decode_graph_nocolor(qt, fd, &l);
 	close(fd);
 }
 
@@ -163,6 +166,29 @@ void 		create_leaf_from_line(t_qt **qt, const char *line, t_le **l)
 	(*qt)->color = MLV_convert_rgba_to_color(c.red, c.green, c.blue, c.alpha);
 }
 
+void 		create_leaf_from_line_nocolor(t_qt **qt, const char *line, t_le **l)
+{
+	unsigned int	n;
+	int				i;
+	char			color[16];
+
+	i = 0;
+	get_leaf(line, color, &i);
+	n = (unsigned int)strtol(color, NULL, 16);
+	*qt = search_node(n, l);
+	if (!*qt)
+	{
+		*qt = create_tree();
+		(*qt)->n_node = n;
+		add_node_to_le(n, l, *qt);
+	}
+	(*qt)->n_node = n;
+	if (line[i] == '0')
+		(*qt)->color = MLV_COLOR_BLACK;
+	else
+		(*qt)->color = MLV_COLOR_WHITE;
+}
+
 void 		decode_graph(t_qt **qt, int fd, t_le **l)
 {
 	char	*line;
@@ -174,6 +200,28 @@ void 		decode_graph(t_qt **qt, int fd, t_le **l)
 		create_node_from_line(qt, line, l);
 	else
 		create_leaf_from_line(qt, line, l);
+	free(line);
+	if ((*qt)->no)
+		decode_graph(&(*qt)->no, fd, l);
+	if ((*qt)->ne)
+		decode_graph(&(*qt)->ne, fd, l);
+	if ((*qt)->se)
+		decode_graph(&(*qt)->se, fd, l);
+	if ((*qt)->so)
+		decode_graph(&(*qt)->so, fd, l);
+}
+
+void 		decode_graph_nocolor(t_qt **qt, int fd, t_le **l)
+{
+	char	*line;
+
+	line = NULL;
+	if (get_next_line(fd, &line) <= 0)
+		return ;
+	if (strchr(line, ':'))
+		create_node_from_line(qt, line, l);
+	else
+		create_leaf_from_line_nocolor(qt, line, l);
 	free(line);
 	if ((*qt)->no)
 		decode_graph(&(*qt)->no, fd, l);

@@ -88,10 +88,10 @@ void        encode_nocolor(t_qt *qt, FILE *fp)
 			fwrite(&c, 1, 1, fp);
         printf("]\n");
     }
-    encode(qt->no, fp);
-    encode(qt->ne, fp);
-    encode(qt->se, fp);
-    encode(qt->so, fp);
+    encode_nocolor(qt->no, fp);
+    encode_nocolor(qt->ne, fp);
+    encode_nocolor(qt->se, fp);
+    encode_nocolor(qt->so, fp);
 }
 
 char		*add_ext_to_filename(const char *file, const char *ext)

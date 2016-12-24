@@ -139,6 +139,8 @@ double	distance_two_inner_tree(t_qt **a, t_qt **b)
 	t_color	x_a;
 	t_color	x_b;
 
+	if (!*a || !*b)
+		return (0);
 	if (*a && *b && is_leaf(*a) && is_leaf(*b))
 	{
 		MLV_Color_to_color((*a)->color, &x_a);

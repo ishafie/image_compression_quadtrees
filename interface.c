@@ -1,5 +1,29 @@
 #include "includes/quadtree.h"
 
+void 		create_qtc(t_qt **qt, char **filename, char *text)
+{
+	FILE		*fp;
+
+	free(*filename);
+	*filename = text;
+	delete_tree(qt);
+	*qt = NULL;
+	fp = fopen(text, "rb");
+	if (!fp)
+		err_what(FILE_ISSUE);
+	decode_bin(qt, fp);
+	fclose(fp);
+}
+
+void 		create_gmc(t_qt **qt, char **filename, char *text)
+{
+	free(*filename);
+	*filename = text;
+	delete_tree(qt);
+	*qt = NULL;
+	decodage(*filename, qt, COLOR);
+}
+
 void 		create_qtn(t_qt **qt, char **filename, char *text)
 {
 	FILE		*fp;
@@ -13,6 +37,15 @@ void 		create_qtn(t_qt **qt, char **filename, char *text)
 		err_what(FILE_ISSUE);
 	decode_bin_nocolor(qt, fp);
 	fclose(fp);
+}
+
+void 		create_gmn(t_qt **qt, char **filename, char *text)
+{
+	free(*filename);
+	*filename = text;
+	delete_tree(qt);
+	*qt = NULL;
+	decodage(*filename, qt, NOCOLOR);
 }
 
 void 		create_img(t_qt **qt, char **filename, char *text)
@@ -43,16 +76,20 @@ void 		open_img(t_qt **qt, char **filename, int *mini)
 		"Tapez le chemin de votre image : ", &text);
 	if (stat(text, &sb) != -1)
 	{
+		*mini = 1;
 		if (is_img(text))
 		{
 			*mini = 0;
 			create_img(qt, filename, text);
 		}
 		else if (is_qtn(text))
-		{
-			*mini = 1;
 			create_qtn(qt, filename, text);
-		}
+		else if (is_gmn(text))
+			create_gmn(qt, filename, text);
+		else if (is_gmc(text))
+			create_gmc(qt, filename, text);
+		else if (is_qtc(text))
+			create_qtc(qt, filename, text);
 	}
 	MLV_clear_window(MLV_COLOR_BLACK);
 	create_interface(*qt);

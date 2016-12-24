@@ -70,9 +70,9 @@ void 		click_interface(t_qt **qt, char *filename)
 			mini = 1;
 		}
 		if (click_save_button_graph_color(x, y))
-			encodage_graph(*qt, filename);
+			encodage_graph(*qt, filename, COLOR);
 		if (click_save_button_graph_bandw(x, y))
-			printf("save in graph bandw\n");
+			encodage_graph(*qt, filename, NOCOLOR);
 		if (click_open_img_button(x, y))
 			open_img(qt, &filename, &mini);
 	}

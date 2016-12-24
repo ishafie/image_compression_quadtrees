@@ -33,7 +33,7 @@ void 	test_decode(void)
 	fp = fopen("test", "rb");
 	if (!fp)
 		err_what(FILE_ISSUE);
-	decode(&tree, fp);
+	decode_bin(&tree, fp);
 	fclose(fp);
 	printf("\n");
 	draw_quadtree(tree, 0, TAILLE_X, 0, TAILLE_Y);
@@ -87,7 +87,7 @@ void 	test_decode_encode_graph(const char *filename)
 {
 	t_qt	*qt;
 
-	decodage(filename, &qt);
+	decodage(filename, &qt, COLOR);
 	printf("fin du decodage\n");
 	MLV_wait_mouse(0, 0);
 	MLV_clear_window(MLV_COLOR_BLACK);

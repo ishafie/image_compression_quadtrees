@@ -12,7 +12,7 @@ uint8_t     convert_to_dec(FILE *fp)
     while (i < 8)
     {
 		fread(&bin[i], 1, 1, fp);
-		printf("%d", bin[i]);
+		/*printf("%d", bin[i]);*/
         i++;
     }
     i = 0;
@@ -32,42 +32,37 @@ t_color	   start_gen_color(FILE *fp)
     t_color color;
 
     color.red = convert_to_dec(fp);
-    printf("][");
+    /*printf("][");*/
     color.green = convert_to_dec(fp);
-    printf("][");
+    /*printf("][");*/
     color.blue = convert_to_dec(fp);
-    printf("][");
+    /*printf("][");*/
     color.alpha = convert_to_dec(fp);
     return (color);
 }
 
-void       decode(t_qt **qt, FILE *fp)
+void       decode_bin(t_qt **qt, FILE *fp)
 {
     t_color color;
 	char	c;
 
     if (feof(fp))
-	{
-		printf("fin\n");
         return ;
-	}
 	fread(&c, 1, 1, fp);
     *qt = create_tree();
 	if (c == 0)
     {
-        printf("0");
-        decode(&(*qt)->no, fp);
-        decode(&(*qt)->ne, fp);
-        decode(&(*qt)->se, fp);
-        decode(&(*qt)->so, fp);
+        /*printf("0");*/
+        decode_bin(&(*qt)->no, fp);
+        decode_bin(&(*qt)->ne, fp);
+        decode_bin(&(*qt)->se, fp);
+        decode_bin(&(*qt)->so, fp);
     }
     else
     {
-
-        printf("1[");
         color = start_gen_color(fp);
         (*qt)->color = MLV_convert_rgba_to_color(color.red, color.green, color.blue, color.alpha);
-		printf("]\n");
+		/*printf("]\n");*/
         return ;
     }
 }
@@ -87,26 +82,19 @@ void       	decode_bin_nocolor(t_qt **qt, FILE *fp)
 	char	c;
 
     if (feof(fp))
-	{
-		printf("fin\n");
         return ;
-	}
 	fread(&c, 1, 1, fp);
     *qt = create_tree();
-	printf("c = %d\n", c);
 	if (c == 0)
     {
-        printf("0");
-        decode(&(*qt)->no, fp);
-        decode(&(*qt)->ne, fp);
-        decode(&(*qt)->se, fp);
-        decode(&(*qt)->so, fp);
+        decode_bin_nocolor(&(*qt)->no, fp);
+        decode_bin_nocolor(&(*qt)->ne, fp);
+        decode_bin_nocolor(&(*qt)->se, fp);
+        decode_bin_nocolor(&(*qt)->so, fp);
     }
     else
     {
-        printf("1[");
         (*qt)->color = gen_black_or_white(fp);
-		printf("]\n");
         return ;
     }
 }
