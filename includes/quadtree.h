@@ -18,7 +18,6 @@
 # include <dirent.h>
 # include <math.h>
 # include <MLV/MLV_all.h>
-# include <pthread.h>
 
 enum {WHAT, FILE_ISSUE, IMG_NOT_FOUND, COLOR, NOCOLOR};
 
@@ -71,16 +70,20 @@ typedef struct					s_list_encoding
 	unsigned int				n_node;
 }								t_le;
 
-typedef struct			s_thread
+typedef struct					s_list_dist
 {
-	t_qt				**qt;
-	t_lc				**l;
-	MLV_Image			*img;
-	int					x1;
-	int					x2;
-	int					y1;
-	int					y2;
-}						t_thread;
+	struct s_list_dist			*next;
+	struct s_list_dist			*prev;
+	struct s_quadtree			**a;
+	struct s_quadtree			**b;
+	double						dist;
+}								t_ld;
+
+typedef struct					s_ld_container
+{
+	struct s_list_dist			*first;
+	struct s_list_dist			*last;
+}								t_ldc;
 
 t_qt		*g_test;
 int			g_nb_op_creation;
@@ -126,6 +129,7 @@ int			color_diff(MLV_Color x, MLV_Color y);
 void		find_tree_min_dist(MLV_Image *img, t_qt **qt, t_qt **paire);
 void		minimise_perte(MLV_Image *img, t_qt **racine, t_qt **qt);
 void		minimise_perte_hub(MLV_Image *img, t_qt **racine, t_qt **qt);
+void 		analyze_minimize_and_draw(t_qt **qt);
 
 double		get_dist_final(t_qt **a, t_qt **b);
 int			is_no_leaf(t_qt *a);
@@ -167,6 +171,10 @@ void 		open_img(t_qt **qt, char **filename, int *mini);
 void	free_tree(t_qt **qt);
 void 	analyze_and_minimize(t_qt **qt);
 double	distance_two_inner_tree(t_qt **a, t_qt **b);
+
+int			add_order_ld(t_ld **l, t_ld **last, t_qt **a, t_qt **b, double dist);
+t_ldc		*create_list_dist_container(t_ld *l_dist);
+void		display_list_dist(t_ld *l);
 
 int			is_qtn(const char *str);
 int			is_qtc(const char *str);

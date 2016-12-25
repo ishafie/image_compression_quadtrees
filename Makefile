@@ -21,6 +21,7 @@ SRC			=		main.c				\
 					decodage.c			\
 					lst_add_order.c		\
 					minimisation.c		\
+					list_dist.c			\
 					encodage_graph.c	\
 					decodage_graph.c	\
 					list_encoding.c		\
@@ -34,8 +35,8 @@ SRC			=		main.c				\
 OBJ_NAME	=		$(SRC:.c=.o)
 OBJ_PATH	=		obj/
 OBJ			=		$(addprefix $(OBJ_PATH), $(OBJ_NAME))
-FLAGS		=		-Wall -Wextra -Werror --ansi --pedantic  -g -D_REENTRANT
-LIB			=		-lMLV -lm -lpthread
+FLAGS		=		-Wall -Wextra -Werror --ansi --pedantic  -g
+LIB			=		-lMLV -lm
 
 .PHONY: all, clean, fclean, re
 

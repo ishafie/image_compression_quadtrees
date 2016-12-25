@@ -1,5 +1,19 @@
 #include "includes/quadtree.h"
 
+double		dist(t_color px, t_color moy)
+{
+	double powr;
+	double powg;
+	double powb;
+	double powa;
+
+	powr = (px.red - moy.red) * (px.red - moy.red);
+	powg = (px.green - moy.green) * (px.green - moy.green);
+	powb = (px.blue - moy.blue) * (px.blue - moy.blue);
+	powa = (px.alpha - moy.alpha) * (px.alpha - moy.alpha);
+	return (sqrt(powr + powg + powb + powa));
+}
+
 double	get_dist(MLV_Color x, MLV_Color y)
 {
 	t_color x_c;
@@ -107,25 +121,25 @@ double	distance_leaf_and_inner_tree(MLV_Color color, t_qt **a)
 	t_color	y;
 
 	ret = 0;
-	if ((*a)->no)
+	if (*a && (*a)->no)
 	{
 		MLV_Color_to_color((*a)->no->color, &x);
 		MLV_Color_to_color(color, &y);
 		ret += dist(y, x) / 4;
 	}
-	if ((*a)->ne)
+	if (*a && (*a)->ne)
 	{
 		MLV_Color_to_color((*a)->ne->color, &x);
 		MLV_Color_to_color(color, &y);
 		ret += dist(y, x) / 4;
 	}
-	if ((*a)->se)
+	if (*a && (*a)->se)
 	{
 		MLV_Color_to_color((*a)->se->color, &x);
 		MLV_Color_to_color(color, &y);
 		ret += dist(y, x) / 4;
 	}
-	if ((*a)->so)
+	if (*a && (*a)->so)
 	{
 		MLV_Color_to_color((*a)->so->color, &x);
 		MLV_Color_to_color(color, &y);
@@ -147,7 +161,7 @@ double	distance_two_inner_tree(t_qt **a, t_qt **b)
 		MLV_Color_to_color((*b)->color, &x_b);
 		return (dist(x_a, x_b));
 	}
-	else if (*a && is_leaf(*a))
+	else if (*b && *a && is_leaf(*a))
 	{
 		return (distance_leaf_and_inner_tree((*a)->color, b)
 		+ distance_two_inner_tree(a, &(*b)->no)
@@ -155,7 +169,7 @@ double	distance_two_inner_tree(t_qt **a, t_qt **b)
 		+ distance_two_inner_tree(a, &(*b)->se)
 		+ distance_two_inner_tree(a, &(*b)->so));
 	}
-	else if (*b && is_leaf(*b))
+	else if (*a && *b && is_leaf(*b))
 	{
 		return (distance_leaf_and_inner_tree((*b)->color, a)
 		+ distance_two_inner_tree(&(*a)->no, b)

@@ -64,7 +64,7 @@ void 		click_interface(t_qt **qt, char *filename)
 		if (click_mini_button(x, y))
 		{
 			if (mini == 0)
-				analyze_and_minimize(qt);
+				analyze_minimize_and_draw(qt);
 			else
 				printf("Minimisation impossible sur cet arbre.\n");
 			mini = 1;
