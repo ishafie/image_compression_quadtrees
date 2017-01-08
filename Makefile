@@ -31,6 +31,8 @@ SRC			=		main.c				\
 					interface_draw.c	\
 					interface_click.c	\
 					check_extension.c	\
+					colorlist.c			\
+					colorlist_action.c	\
 
 OBJ_NAME	=		$(SRC:.c=.o)
 OBJ_PATH	=		obj/

@@ -1,4 +1,4 @@
-#include "includes/quadtree.h"
+#include "includes/colorlist.h"
 
 void 		analyze_minimize_and_draw(t_qt **qt)
 {
@@ -173,4 +173,56 @@ void 	analyze_and_minimize(t_qt **qt)
 	compare_tree(NULL, NULL, NULL, NULL);
 	/*display_list_dist(ldc->first);*/
 	/*free_and_relink_list(&ldc);*/
+}
+
+int 		compare_colorlist(t_cl *a, t_cl *b)
+{
+	double	dist;
+
+	if (a == b || !a || !b || *(a->qt) == *(b->qt))
+		return (0);
+		printf("%p - %p\n", (void*)*(a->qt), (void*)*(b->qt));
+	dist = distance_two_inner_tree(a->qt, b->qt);
+	if (dist < 100)
+	{
+		/*delete_tree(b->qt);*/
+		*(b->qt) = *(a->qt);
+		/*printf("dist = %f\n", dist);*/
+		return (1);
+	}
+	return (0);
+}
+
+void 		minimize_colorlist(t_clc *c)
+{
+	t_cl	*cmp;
+	t_cl	*first;
+
+	if (!c || !c->first || c->first == c->last)
+		return ;
+	first = c->first;
+	cmp = c->first->next;
+	while (first)
+	{
+		while (cmp)
+		{
+			compare_colorlist(first, cmp);
+			cmp = cmp->next;
+		}
+		if (c && c->first)
+			cmp = c->first->next;
+		first = first->next;
+	}
+}
+
+void 		minimize2(t_ci **c)
+{
+	t_ci	*tmp;
+
+	tmp = *c;
+	while (tmp)
+	{
+		minimize_colorlist(tmp->index);
+		tmp = tmp->next;
+	}
 }

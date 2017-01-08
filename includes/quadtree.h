@@ -4,7 +4,7 @@
 # define PERTE 6
 # define TAILLE_X 512
 # define TAILLE_Y 512
-# define OP 10000 /* 65536 - 45sec */
+# define OP 100 /* 65536 - 45sec */
 # define DISPLAY 0
 # define TRUE 1
 
@@ -21,47 +21,47 @@
 
 enum {WHAT, FILE_ISSUE, IMG_NOT_FOUND, COLOR, NOCOLOR};
 
-typedef struct			s_zone
+typedef struct					s_zone
 {
-	int					x1;
-	int					x2;
-	int					y1;
-	int					y2;
-}						t_zone;
+	int							x1;
+	int							x2;
+	int							y1;
+	int							y2;
+}								t_zone;
 
-typedef struct			s_color
+typedef struct					s_color
 {
-	int					red;
-	int					green;
-	int					blue;
-	int					alpha;
-}						t_color;
+	int							red;
+	int							green;
+	int							blue;
+	int							alpha;
+}								t_color;
 
-typedef struct			s_quadtree
+typedef struct					s_quadtree
 {
-	struct s_quadtree	*no;
-	struct s_quadtree	*ne;
-	struct s_quadtree	*se;
-	struct s_quadtree	*so;
-	unsigned int		n_node;
-	double				dist;
-	MLV_Color			color;
-}						t_qt;
+	struct s_quadtree			*no;
+	struct s_quadtree			*ne;
+	struct s_quadtree			*se;
+	struct s_quadtree			*so;
+	unsigned int				n_node;
+	double						dist;
+	MLV_Color					color;
+}								t_qt;
 
-typedef struct			s_list
+typedef struct					s_list
 {
-	struct s_list		*next;
-	struct s_list		*prev;
-	struct s_quadtree	*ptr;
-	double				dist;
-	struct s_zone		zone;
-}						t_list;
+	struct s_list				*next;
+	struct s_list				*prev;
+	struct s_quadtree			*ptr;
+	double						dist;
+	struct s_zone				zone;
+}								t_list;
 
-typedef struct			s_list_container
+typedef struct					s_list_container
 {
-	struct s_list		*first;
-	struct s_list		*last;
-}						t_lc;
+	struct s_list				*first;
+	struct s_list				*last;
+}								t_lc;
 
 typedef struct					s_list_encoding
 {
@@ -84,6 +84,7 @@ typedef struct					s_ld_container
 	struct s_list_dist			*first;
 	struct s_list_dist			*last;
 }								t_ldc;
+
 
 t_qt		*g_test;
 int			g_nb_op_creation;
@@ -168,9 +169,9 @@ void 		draw_interface(MLV_Font *font);
 void 		click_interface(t_qt **qt, char *filename);
 void 		open_img(t_qt **qt, char **filename, int *mini);
 
-void	free_tree(t_qt **qt);
-void 	analyze_and_minimize(t_qt **qt);
-double	distance_two_inner_tree(t_qt **a, t_qt **b);
+void		free_tree(t_qt **qt);
+void 		analyze_and_minimize(t_qt **qt);
+double		distance_two_inner_tree(t_qt **a, t_qt **b);
 
 int			add_order_ld(t_ld **l, t_ld **last, t_qt **a, t_qt **b, double dist);
 t_ldc		*create_list_dist_container(t_ld *l_dist);

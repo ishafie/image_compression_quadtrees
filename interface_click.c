@@ -1,4 +1,4 @@
-#include "includes/quadtree.h"
+#include "includes/colorlist.h"
 
 int 		click_save_button_bin_color(int x, int y)
 {
@@ -52,10 +52,13 @@ void 		click_interface(t_qt **qt, char *filename)
 	int		x;
 	int		y;
 	int		mini;
+	t_ci	*ci;
 
+	ci = NULL;
 	mini = 0;
 	while (42 && qt)
 	{
+		ci = NULL;
 		MLV_wait_mouse(&x, &y);
 		if (click_save_button_bin_color(x, y))
 			encode_bin(*qt, filename, COLOR);
@@ -64,7 +67,13 @@ void 		click_interface(t_qt **qt, char *filename)
 		if (click_mini_button(x, y))
 		{
 			if (mini == 0)
-				analyze_minimize_and_draw(qt);
+			{
+				/*analyze_minimize_and_draw(qt);*/
+				printf("Debut minimisation\n");
+				update_colorlist(&ci, qt);
+				minimize2(&ci);
+				printf("Fin minimisation\n");
+			}
 			else
 				printf("Minimisation impossible sur cet arbre.\n");
 			mini = 1;

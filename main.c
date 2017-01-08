@@ -1,4 +1,4 @@
-#include "includes/quadtree.h"
+#include "includes/colorlist.h"
 
 void	test_color(void)
 {
