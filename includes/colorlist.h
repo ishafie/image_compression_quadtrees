@@ -6,7 +6,9 @@
 typedef struct							s_colorlist
 {
 	struct s_quadtree					**qt;
+	int									deleted;
 	struct s_colorlist					*next;
+	struct s_colorlist_container		*container;
 }										t_cl;
 
 typedef struct							s_colorlist_index
@@ -21,9 +23,9 @@ typedef struct							s_colorlist_container
 	struct s_colorlist					*last;
 }										t_clc;
 
-
-
-t_cl			*create_colorlist(t_qt **qt);
+void 			delete_tree_and_colorlist(t_qt **qt);
+void 			delete_any_colorlist(t_clc **c, t_cl *del);
+t_cl			*create_colorlist(t_qt **qt, t_clc **c);
 void 			addback_colorlist(t_clc **c, t_qt **qt);
 void 			addfront_colorindex(t_ci **c, t_qt **qt);
 void 			update_colorlist(t_ci **ci, t_qt **qt);

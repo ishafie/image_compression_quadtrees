@@ -82,6 +82,7 @@ void		draw_quadtree(t_qt *qt, int x1, int x2, int y1, int y2)
 {
 	if (!qt)
 		return ;
+	printf("%p\n", (void*)qt);
 	if (is_leaf(qt))
 	{
 		/*MLV_draw_filled_circle(x1 + (x2 - x1)/2, y1 + (y2 - y1)/2, (x2 - x1)/2, qt->color);*/

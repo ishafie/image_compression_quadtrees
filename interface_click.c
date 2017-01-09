@@ -68,10 +68,17 @@ void 		click_interface(t_qt **qt, char *filename)
 		{
 			if (mini == 0)
 			{
+				ci = NULL;
 				/*analyze_minimize_and_draw(qt);*/
 				printf("Debut minimisation\n");
 				update_colorlist(&ci, qt);
 				minimize2(&ci);
+				printf("pret ?\n");
+				MLV_wait_mouse(0, 0);
+				printf("lets go !\n");
+				MLV_clear_window(MLV_COLOR_BLACK);
+				draw_quadtree(*qt, 0, TAILLE_X, 0, TAILLE_Y);
+				MLV_actualise_window();
 				printf("Fin minimisation\n");
 			}
 			else

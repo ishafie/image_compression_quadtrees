@@ -99,8 +99,11 @@ void 		create_interface(t_qt *qt)
 {
 	MLV_Font *font;
 
+	printf("get da font !\n");
 	font = MLV_load_font("resources/panforte.ttf", 12);
+	printf("going\n");
 	draw_quadtree(qt, 0, TAILLE_X, 0, TAILLE_Y);
+	printf("unstoppable\n");
 	draw_interface(font);
 	MLV_actualise_window();
 }

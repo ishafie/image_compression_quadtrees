@@ -175,20 +175,33 @@ void 	analyze_and_minimize(t_qt **qt)
 	/*free_and_relink_list(&ldc);*/
 }
 
-int 		compare_colorlist(t_cl *a, t_cl *b)
+int 		compare_colorlist(t_cl *a, t_cl **b)
 {
 	double	dist;
+	t_qt	**qt;
 
-	if (a == b || !a || !b || *(a->qt) == *(b->qt))
+	qt = NULL;
+	if (!a || !*b || a == *b || !(*b)->qt || !*((*b)->qt)
+	|| *(a->qt) == *((*b)->qt) || (*b)->deleted == 1)
 		return (0);
-		printf("%p - %p\n", (void*)*(a->qt), (void*)*(b->qt));
-	dist = distance_two_inner_tree(a->qt, b->qt);
-	if (dist < 100)
+	/*printf("%p - %p\n", (void*)*(a->qt), (void*)*(b->qt));*/
+	if (a && a->qt && b && (*b) && (*b)->qt)
 	{
-		/*delete_tree(b->qt);*/
-		*(b->qt) = *(a->qt);
-		/*printf("dist = %f\n", dist);*/
-		return (1);
+		dist = get_dist_final(a->qt, (*b)->qt);
+		/*printf("op = %lu\n", op);*/
+		if (dist < 1)
+		{
+			qt = (*b)->qt;
+			(*b)->deleted = 1;
+			delete_tree_and_colorlist((*b)->qt);
+			*b = NULL;
+			if (qt)
+				*qt = *(a->qt);
+			/*b->qt = a->qt;*/
+			/**(b->qt) = *(a->qt);*/
+			/*printf("dist = %f\n", dist);*/
+			return (1);
+		}
 	}
 	return (0);
 }
@@ -197,17 +210,25 @@ void 		minimize_colorlist(t_clc *c)
 {
 	t_cl	*cmp;
 	t_cl	*first;
+	int line;
 
 	if (!c || !c->first || c->first == c->last)
 		return ;
 	first = c->first;
 	cmp = c->first->next;
+	line = count_color_line(c);
+	printf("line = %d\n", line);
+	/*1 2 3*/
 	while (first)
 	{
 		while (cmp)
 		{
-			compare_colorlist(first, cmp);
-			cmp = cmp->next;
+			if (line == 14)
+			{
+				printf("cmp = %p\n", (void*)cmp);
+			}
+			if (compare_colorlist(first, &cmp) == 0 && cmp)
+				cmp = cmp->next;
 		}
 		if (c && c->first)
 			cmp = c->first->next;

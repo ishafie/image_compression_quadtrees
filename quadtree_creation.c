@@ -15,8 +15,21 @@ t_qt		*create_tree(void)
 	new_qt->dist = -1;
 	new_qt->n_node = n_node;
 	new_qt->color = MLV_COLOR_BLUE;
+	new_qt->cl = NULL;
 	n_node++;
 	return (new_qt);
+}
+
+void 		delete_tree(t_qt **qt)
+{
+	if (!*qt)
+		return ;
+	delete_tree(&(*qt)->no);
+	delete_tree(&(*qt)->ne);
+	delete_tree(&(*qt)->se);
+	delete_tree(&(*qt)->so);
+	free(*qt);
+	*qt = NULL;
 }
 
 static int	d(int x1, int x2)
@@ -192,16 +205,4 @@ void	quadtree_maker2(t_lc **l, MLV_Image *img, t_qt **qt, int operations)
 		i++;
 	}
 	printf("100%%\n");
-}
-
-void 		delete_tree(t_qt **qt)
-{
-	if (!*qt)
-		return ;
-	delete_tree(&(*qt)->no);
-	delete_tree(&(*qt)->ne);
-	delete_tree(&(*qt)->se);
-	delete_tree(&(*qt)->so);
-	free(*qt);
-	*qt = NULL;
 }
