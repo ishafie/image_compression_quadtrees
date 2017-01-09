@@ -179,6 +179,7 @@ int 		compare_colorlist(t_cl *a, t_cl **b)
 {
 	double	dist;
 	t_qt	**qt;
+	static int test = 0;
 
 	qt = NULL;
 	if (!a || !*b || a == *b || !(*b)->qt || !*((*b)->qt)
@@ -191,8 +192,15 @@ int 		compare_colorlist(t_cl *a, t_cl **b)
 		/*printf("op = %lu\n", op);*/
 		if (dist < 1)
 		{
+			test++;
 			qt = (*b)->qt;
+			printf("cmp = %p - test = %d\n", (void*)*qt, test);
 			(*b)->deleted = 1;
+			if (test == 23)
+			{
+				parcours_test((*(*b)->qt));
+				exit(1);
+			}
 			delete_tree_and_colorlist((*b)->qt);
 			*b = NULL;
 			if (qt)
@@ -225,7 +233,7 @@ void 		minimize_colorlist(t_clc *c)
 		{
 			if (line == 14)
 			{
-				printf("cmp = %p\n", (void*)cmp);
+				printf("\n==============================================================================\n");
 			}
 			if (compare_colorlist(first, &cmp) == 0 && cmp)
 				cmp = cmp->next;

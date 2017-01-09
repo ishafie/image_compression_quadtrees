@@ -105,7 +105,7 @@ double	get_dist_final(t_qt **a, t_qt **b)
 {
 	/*if (!is_no_leaf(*a) || !is_no_leaf(*b))
 		return (10000);*/
-	if (is_leaf(*a) && is_leaf(*b))
+	if (*a && *b && is_leaf(*a) && is_leaf(*b))
 		return (get_dist((*a)->color, (*b)->color));
 	else if (is_leaf(*a) && !is_leaf(*b))
 		return (get_4_dist_color(b, (*a)->color));

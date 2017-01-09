@@ -76,7 +76,7 @@ void 	parcours_test(t_qt *qt)
 	if (!qt)
 		return ;
 	printf("[%p] - > [%u] -> [%x]\n", (void*)qt, qt->n_node, qt->n_node);
-	printf("\t\t[%u] - [%u] - [%u] - [%u]\n", qt->no ? qt->no->n_node : 0, qt->ne ? qt->ne->n_node : 0, qt->se ? qt->se->n_node : 0, qt->so ? qt->so->n_node : 0);
+/*	printf("\t\t[%u] - [%u] - [%u] - [%u]\n", qt->no ? qt->no->n_node : 0, qt->ne ? qt->ne->n_node : 0, qt->se ? qt->se->n_node : 0, qt->so ? qt->so->n_node : 0);*/
 	parcours_test(qt->no);
 	parcours_test(qt->ne);
 	parcours_test(qt->se);
