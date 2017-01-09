@@ -16,6 +16,7 @@ t_qt		*create_tree(void)
 	new_qt->n_node = n_node;
 	new_qt->color = MLV_COLOR_BLUE;
 	new_qt->cl = NULL;
+	new_qt->deleted = 0;
 	n_node++;
 	return (new_qt);
 }

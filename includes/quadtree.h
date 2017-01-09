@@ -44,6 +44,7 @@ typedef struct					s_quadtree
 	struct s_quadtree			*se;
 	struct s_quadtree			*so;
 	struct s_colorlist			*cl;
+	int							deleted;
 	unsigned int				n_node;
 	double						dist;
 	MLV_Color					color;

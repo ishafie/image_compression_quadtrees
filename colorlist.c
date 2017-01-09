@@ -48,12 +48,14 @@ void 		delete_tree_and_colorlist(t_qt **qt)
 	delete_tree_and_colorlist(&(*qt)->ne);
 	delete_tree_and_colorlist(&(*qt)->se);
 	delete_tree_and_colorlist(&(*qt)->so);
-	if (qt && *qt && (*qt)->cl && (*qt)->cl->container)
+	if (qt && *qt && (*qt)->cl && (*qt)->cl->container && (*qt)->deleted == 0)
 	{
 		delete_any_colorlist(&(*qt)->cl->container, (*qt)->cl);
+		(*qt)->deleted = 1;
 		free(*qt);
 		*qt = NULL;
 	}
+	printf("%p\n", (void*)(*qt));
 }
 
 void 			delete_any_colorlist(t_clc **c, t_cl *del)

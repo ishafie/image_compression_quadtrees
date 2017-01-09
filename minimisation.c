@@ -182,29 +182,27 @@ int 		compare_colorlist(t_cl *a, t_cl **b)
 	static int test = 0;
 
 	qt = NULL;
-	if (!a || !*b || a == *b || !(*b)->qt || !*((*b)->qt)
-	|| *(a->qt) == *((*b)->qt) || (*b)->deleted == 1)
+	if (!a || !*b || a == *b || !(*b)->qt || !(*(*b)->qt)
+	|| *(a->qt) == *((*b)->qt) || (*b)->deleted == 1 || (*(*b)->qt)->deleted == 1)
 		return (0);
 	/*printf("%p - %p\n", (void*)*(a->qt), (void*)*(b->qt));*/
 	if (a && a->qt && b && (*b) && (*b)->qt)
 	{
 		dist = get_dist_final(a->qt, (*b)->qt);
 		/*printf("op = %lu\n", op);*/
-		if (dist < 1)
+		if (dist < 1000)
 		{
 			test++;
 			qt = (*b)->qt;
 			printf("cmp = %p - test = %d\n", (void*)*qt, test);
 			(*b)->deleted = 1;
-			if (test == 23)
-			{
-				parcours_test((*(*b)->qt));
-				exit(1);
-			}
 			delete_tree_and_colorlist((*b)->qt);
 			*b = NULL;
 			if (qt)
+			{
 				*qt = *(a->qt);
+				(*qt)->deleted = 1;
+			}
 			/*b->qt = a->qt;*/
 			/**(b->qt) = *(a->qt);*/
 			/*printf("dist = %f\n", dist);*/
