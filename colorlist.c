@@ -10,6 +10,7 @@ t_cl			*create_colorlist(t_qt **qt, t_clc **c)
 	newcl->qt = qt;
 	newcl->deleted = 0;
 	newcl->next = NULL;
+	newcl->prev = NULL;
 	newcl->container = *c;
 	if (qt && *qt)
 		(*qt)->cl = newcl;
@@ -71,6 +72,10 @@ void 			delete_any_colorlist(t_clc **c, t_cl *del)
 	{
 		if (tmp == del)
 		{
+			if (tmp && (*c)->first == tmp)
+				(*c)->first = (*c)->first->next;
+			if (tmp && (*c)->last == tmp)
+				(*c)->last = (*c)->last->prev;
 			if (!prev)
 			{
 				prev = tmp;
@@ -91,6 +96,8 @@ void 			delete_any_colorlist(t_clc **c, t_cl *del)
 
 void 			addback_colorlist(t_clc **c, t_qt **qt)
 {
+	t_cl		*prev;
+
 	if (!*c)
 		return ;
 	if (!(*c)->last)
@@ -99,8 +106,10 @@ void 			addback_colorlist(t_clc **c, t_qt **qt)
 		(*c)->last = (*c)->first;
 		return ;
 	}
+	prev = (*c)->last;
 	(*c)->last->next = create_colorlist(qt, c);
 	(*c)->last = (*c)->last->next;
+	(*c)->last->prev = prev;
 }
 
 void 			addfront_colorindex(t_ci **c, t_qt **qt)

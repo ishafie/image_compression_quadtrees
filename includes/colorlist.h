@@ -8,6 +8,7 @@ typedef struct							s_colorlist
 	struct s_quadtree					**qt;
 	int									deleted;
 	struct s_colorlist					*next;
+	struct s_colorlist					*prev;
 	struct s_colorlist_container		*container;
 }										t_cl;
 

@@ -196,6 +196,8 @@ int 		compare_colorlist(t_cl *a, t_cl **b)
 			qt = (*b)->qt;
 			printf("cmp = %p - test = %d\n", (void*)*qt, test);
 			(*b)->deleted = 1;
+			if ((*b)->next)
+				(*b)->next->prev = (*b)->prev;
 			delete_tree_and_colorlist((*b)->qt);
 			*b = NULL;
 			if (qt)
@@ -215,30 +217,27 @@ int 		compare_colorlist(t_cl *a, t_cl **b)
 void 		minimize_colorlist(t_clc *c)
 {
 	t_cl	*cmp;
-	t_cl	*first;
+	t_cl	*last;
 	int line;
 
-	if (!c || !c->first || c->first == c->last)
+	if (!c || !c->last || c->last == c->first)
 		return ;
-	first = c->first;
-	cmp = c->first->next;
+	last = c->last;
+	cmp = c->last->prev;
 	line = count_color_line(c);
 	printf("line = %d\n", line);
 	/*1 2 3*/
-	while (first)
+	while (last)
 	{
 		while (cmp)
 		{
-			if (line == 14)
-			{
-				printf("\n==============================================================================\n");
-			}
-			if (compare_colorlist(first, &cmp) == 0 && cmp)
-				cmp = cmp->next;
+			printf("cl = %p\n", (void*)cmp);
+			if (compare_colorlist(last, &cmp) == 0 && cmp)
+				cmp = cmp->prev;
 		}
-		if (c && c->first)
-			cmp = c->first->next;
-		first = first->next;
+		if (c && c->last)
+			cmp = c->last->prev;
+		last = last->prev;
 	}
 }
 
