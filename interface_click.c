@@ -47,6 +47,52 @@ int 		click_open_img_button(int x, int y)
 	return (0);
 }
 
+void 		display_colorlist(t_clc *clc)
+{
+	t_cl	*tmp;
+
+	if (!clc)
+	{
+		printf("vide\n");
+		return ;
+	}
+	tmp = clc->first;
+	while (tmp)
+	{
+		if ((*(tmp->qt)))
+			printf("%d - ", (*(tmp->qt))->n_node);
+		tmp = tmp->next;
+	}
+	printf("\n");
+}
+
+void 		test_colorlist(t_ci *ci)
+{
+	t_ci	*tmp;
+	t_cl	*tl;
+	int		i;
+
+	i = 0;
+	tmp = ci;
+	while (tmp && i < 30)
+	{
+		tmp = tmp->next;
+		i++;
+	}
+	tl = tmp->index->last;
+	display_colorlist(tmp->index);
+
+	MLV_wait_mouse(0, 0);
+	while (tl)
+	{
+		if (tl && tl->deleted != 1 && tl->qt && (*(tl->qt))
+			&& (*(tl->qt))->n_node)
+			printf("node : %d\n", (*(tl->qt))->n_node);
+		tl = delete_any_colorlist(&(tmp->index), tl);
+		MLV_wait_mouse(0, 0);
+	}
+}
+
 void 		click_interface(t_qt **qt, char *filename)
 {
 	int		x;
@@ -72,6 +118,7 @@ void 		click_interface(t_qt **qt, char *filename)
 				/*analyze_minimize_and_draw(qt);*/
 				printf("Debut minimisation\n");
 				update_colorlist(&ci, qt);
+				/*test_colorlist(ci);*/
 				minimize2(&ci);
 				printf("pret ?\n");
 				MLV_wait_mouse(0, 0);

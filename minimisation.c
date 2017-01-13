@@ -175,43 +175,91 @@ void 	analyze_and_minimize(t_qt **qt)
 	/*free_and_relink_list(&ldc);*/
 }
 
-int 		compare_colorlist(t_cl *a, t_cl **b)
+t_qt		*is_subtree(t_qt *a, t_qt *b)
+{
+	if (!b)
+		return (NULL);
+	else if (a == b)
+		return (a);
+	else
+	{
+		if (is_subtree(a, b->no))
+			return (a);
+		if (is_subtree(a, b->ne))
+			return (a);
+		if (is_subtree(a, b->se))
+			return (a);
+		if (is_subtree(a, b->so))
+			return (a);
+		return (NULL);
+	}
+}
+
+int			is_child(t_qt *a, t_qt *b)
+{
+	if (a && (a->no == b || a->ne ==b || a->se == b || a->so == b))
+		return (1);
+	return (0);
+}
+
+t_cl 		*compare_colorlist(t_cl *a, t_cl **b)
 {
 	double	dist;
+	t_cl	*ret;
 	t_qt	**qt;
 	static int test = 0;
 
 	qt = NULL;
+	ret = NULL;
 	if (!a || !*b || a == *b || !(*b)->qt || !(*(*b)->qt)
 	|| *(a->qt) == *((*b)->qt) || (*b)->deleted == 1 || (*(*b)->qt)->deleted == 1)
-		return (0);
+	{
+		printf(" => NOPE\n");
+		return (ret);
+	}
 	/*printf("%p - %p\n", (void*)*(a->qt), (void*)*(b->qt));*/
 	if (a && a->qt && b && (*b) && (*b)->qt)
 	{
+		if (!is_child(*(a->qt), *((*b)->qt)) && is_subtree(*(a->qt), (*(*b)->qt)))
+			return (ret);
 		dist = get_dist_final(a->qt, (*b)->qt);
 		/*printf("op = %lu\n", op);*/
 		if (dist < 1000)
 		{
+			printf(" => YES\n");
+			if (is_child(*(a->qt), *((*b)->qt)))
+			{
+				if ((*b)->prev)
+					ret = (*b)->prev;
+				else
+					ret = NULL;
+				delete_tree_and_colorlist((*b)->qt);
+				(*((*b)->qt)) = NULL;
+				return (ret);
+			}
 			test++;
 			qt = (*b)->qt;
-			printf("cmp = %p - test = %d\n", (void*)*qt, test);
+			/*printf("cmp = %p - test = %d\n", (void*)*qt, test);*/
 			(*b)->deleted = 1;
 			if ((*b)->next)
 				(*b)->next->prev = (*b)->prev;
+			if ((*b)->prev)
+				ret = (*b)->prev;
+			else
+				ret = NULL;
 			delete_tree_and_colorlist((*b)->qt);
 			*b = NULL;
-			if (qt)
-			{
-				*qt = *(a->qt);
+			*qt = *(a->qt);
+			if (qt && (*qt))
 				(*qt)->deleted = 1;
-			}
 			/*b->qt = a->qt;*/
 			/**(b->qt) = *(a->qt);*/
 			/*printf("dist = %f\n", dist);*/
-			return (1);
+			return (ret);
 		}
 	}
-	return (0);
+	printf(" => NOPE\n");
+	return (ret);
 }
 
 void 		minimize_colorlist(t_clc *c)
@@ -226,15 +274,19 @@ void 		minimize_colorlist(t_clc *c)
 	cmp = c->last->prev;
 	line = count_color_line(c);
 	printf("line = %d\n", line);
+	display_colorlist(c);
 	/*1 2 3*/
 	while (last)
 	{
-		while (cmp)
+		while (cmp && cmp != last)
 		{
-			printf("cl = %p\n", (void*)cmp);
-			if (compare_colorlist(last, &cmp) == 0 && cmp)
-				cmp = cmp->prev;
+			printf("last = %p - cl = %p - ", (void*)last, (void*)cmp);
+			if (cmp && cmp->deleted != 1 && cmp->qt && (*(cmp->qt)) && (*(cmp->qt))->n_node && last->qt && (*(last->qt)) && (*(last->qt))->n_node)
+				printf("node last : %d - node : %d", (*(last->qt))->n_node, (*(cmp->qt))->n_node);
+			cmp = compare_colorlist(last, &cmp);
+			printf("\n");
 		}
+		display_colorlist(c);
 		if (c && c->last)
 			cmp = c->last->prev;
 		last = last->prev;

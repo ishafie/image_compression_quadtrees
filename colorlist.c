@@ -56,42 +56,49 @@ void 		delete_tree_and_colorlist(t_qt **qt)
 		free(*qt);
 		*qt = NULL;
 	}
-	printf("%p\n", (void*)(*qt));
 }
 
-void 			delete_any_colorlist(t_clc **c, t_cl *del)
+t_cl 			*delete_any_colorlist(t_clc **c, t_cl *del)
 {
 	t_cl		*tmp;
-	t_cl		*prev;
+	t_cl		*aux;
 
-	if (!(*c))
-		return ;
-	prev = NULL;
-	tmp = (*c)->first;
+	if (!c || !(*c) || !del)
+		return (del);
+	aux = NULL;
+	tmp = (*c)->last;
 	while (tmp)
 	{
-		if (tmp == del)
+		if (tmp == del && tmp)
 		{
+			printf("=> %p - %d ", (void*)(tmp), (*(tmp->qt))->n_node);
 			if (tmp && (*c)->first == tmp)
 				(*c)->first = (*c)->first->next;
 			if (tmp && (*c)->last == tmp)
 				(*c)->last = (*c)->last->prev;
-			if (!prev)
+			if (!tmp->prev)
 			{
-				prev = tmp;
+				aux = tmp;
 				tmp = tmp->next;
-				free(prev);
-				prev = NULL;
-				return ;
+				free(aux);
+				aux = NULL;
+				if (tmp)
+					tmp->prev = NULL;
+				return (tmp);
 			}
-			prev->next = tmp->next;
+			if (tmp)
+				aux = tmp->prev;
+			if (tmp->prev)
+				tmp->prev->next = tmp->next;
+			if (tmp->next)
+				tmp->next->prev = tmp->prev;
 			free(tmp);
 			tmp = NULL;
-			return ;
+			return (aux);
 		}
-		prev = tmp;
-		tmp = tmp->next;
+		tmp = tmp->prev;
 	}
+	return (del);
 }
 
 void 			addback_colorlist(t_clc **c, t_qt **qt)
