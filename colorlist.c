@@ -43,7 +43,7 @@ t_ci			*create_colorlist_index(t_qt **qt)
 
 void 		delete_tree_and_colorlist(t_qt **qt)
 {
-	if (!*qt)
+	if (!qt || !*qt)
 		return ;
 	delete_tree_and_colorlist(&(*qt)->no);
 	delete_tree_and_colorlist(&(*qt)->ne);
@@ -51,9 +51,35 @@ void 		delete_tree_and_colorlist(t_qt **qt)
 	delete_tree_and_colorlist(&(*qt)->so);
 	if (qt && *qt && (*qt)->cl && (*qt)->cl->container && (*qt)->deleted == 0)
 	{
+		/*printf("AFTER DELETING :\n");
+		display_colorlist(test_ci->index);
+		display_colorlist_otherway(test_ci->index);*/
 		delete_any_colorlist(&(*qt)->cl->container, (*qt)->cl);
 		(*qt)->deleted = 1;
-		free(*qt);
+		(*qt)->no = NULL;
+		(*qt)->ne = NULL;
+		(*qt)->se = NULL;
+		(*qt)->so = NULL;
+		if ((*qt)->par && (*qt)->par->no == *qt)
+		{
+			(*qt)->par->no = NULL;
+			free(*qt);
+		}
+		else if ((*qt)->par && (*qt)->par->ne == *qt)
+		{
+			(*qt)->par->ne = NULL;
+			free(*qt);
+		}
+		else if ((*qt)->par && (*qt)->par->se == *qt)
+		{
+			(*qt)->par->se = NULL;
+			free(*qt);
+		}
+		else if ((*qt)->par && (*qt)->par->so == *qt)
+		{
+			(*qt)->par->so = NULL;
+			free(*qt);
+		}
 		*qt = NULL;
 	}
 }
@@ -67,11 +93,16 @@ t_cl 			*delete_any_colorlist(t_clc **c, t_cl *del)
 		return (del);
 	aux = NULL;
 	tmp = (*c)->last;
+/*	printf("\nlist : ");
+	display_colorlist(*c);
+	printf("\nlist2: ");
+	display_colorlist_otherway(*c);*/
 	while (tmp)
 	{
+		/*if (tmp && tmp->qt && (*(tmp->qt)) && del && del->qt && (*(del->qt)))
+			printf("tmp = %p(%d) et del = %p(%d)\n", (void*)tmp, (*(tmp->qt))->n_node, (void*)del, (*(del->qt))->n_node);*/
 		if (tmp == del && tmp)
 		{
-			printf("=> %p - %d ", (void*)(tmp), (*(tmp->qt))->n_node);
 			if (tmp && (*c)->first == tmp)
 				(*c)->first = (*c)->first->next;
 			if (tmp && (*c)->last == tmp)
@@ -86,6 +117,12 @@ t_cl 			*delete_any_colorlist(t_clc **c, t_cl *del)
 					tmp->prev = NULL;
 				return (tmp);
 			}
+			/*if (tmp && tmp->qt && (*(tmp->qt)))
+				printf("actuel : %d\n", (*(tmp->qt))->n_node);
+			if (tmp->next && tmp->next->qt && (*(tmp->next->qt)))
+				printf("suivant : %d\n", (*(tmp->next->qt))->n_node);
+			if (tmp->prev && tmp->prev->qt && (*(tmp->prev->qt)))
+				printf("precedent : %d\n", (*(tmp->prev->qt))->n_node);*/
 			if (tmp)
 				aux = tmp->prev;
 			if (tmp->prev)

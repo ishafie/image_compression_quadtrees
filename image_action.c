@@ -80,10 +80,12 @@ static int		d(int x1, int x2)
 
 void		draw_quadtree(t_qt *qt, int x1, int x2, int y1, int y2)
 {
-	if (!qt || qt->deleted == 1)
+	if (!qt)
 		return ;
-	printf("-%p => %d\n", (void*)qt, qt->deleted);
-	if (qt && qt->deleted == 0 && is_leaf(qt))
+	/*if (qt->par)
+		printf("parent %d :\n", qt->par->n_node);
+	printf("node = %d\n", qt->n_node);*/
+	if (qt && is_leaf(qt))
 	{
 		/*MLV_draw_filled_circle(x1 + (x2 - x1)/2, y1 + (y2 - y1)/2, (x2 - x1)/2, qt->color);*/
 		MLV_draw_filled_rectangle(x1, y1, x2 - x1, y2 - y1, qt->color);

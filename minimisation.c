@@ -195,6 +195,86 @@ t_qt		*is_subtree(t_qt *a, t_qt *b)
 	}
 }
 
+t_qt		*test_search(t_qt *a, t_qt *b)
+{
+	if (!b)
+		return (NULL);
+	else if (a == b)
+	{
+		/*if ((*(a->parent)))
+		{
+			printf("parent : %d\n", (*(a->parent))->n_node);
+			if ((*(a->parent))->no)
+				printf("parent->no : %d\n", (*(a->parent))->no->n_node);
+			if ((*(a->parent))->ne)
+				printf("parent->ne : %d\n", (*(a->parent))->ne->n_node);
+			if ((*(a->parent))->se)
+				printf("parent->se : %d\n", (*(a->parent))->se->n_node);
+			if ((*(a->parent))->so)
+				printf("parent->so : %d\n", (*(a->parent))->so->n_node);
+		}*/
+		if (a->par)
+		{
+			printf("parent : %d\n", a->par->n_node);
+			if (a->par->no)
+				printf("parent->no : %d\n", a->par->no->n_node);
+			if (a->par->ne)
+				printf("parent->ne : %d\n", a->par->ne->n_node);
+			if (a->par->se)
+				printf("parent->se : %d\n", a->par->se->n_node);
+			if (a->par->so)
+				printf("parent->so : %d\n", a->par->so->n_node);
+		}
+		printf("node ; %d\n", b->n_node);
+		return (a);
+	}
+	else
+	{
+		/*printf("node ; %d\n", b->n_node);*/
+		if (test_search(a, b->no))
+			return (a);
+		if (test_search(a, b->ne))
+			return (a);
+		if (test_search(a, b->se))
+			return (a);
+		if (test_search(a, b->so))
+			return (a);
+		return (NULL);
+	}
+}
+
+t_qt		*test_search_nb(unsigned int node, t_qt *b)
+{
+	if (!b)
+		return (NULL);
+	else if (node == b->n_node)
+	{
+		if (b->par)
+			printf("parent : (%d) => node ; %d\n", b->par->n_node, b->n_node);
+		if (b->par->no)
+			printf("parent->no : %d\n", b->par->no->n_node);
+		if (b->par->ne)
+			printf("parent->ne : %d\n", b->par->ne->n_node);
+		if (b->par->se)
+			printf("parent->se : %d\n", b->par->se->n_node);
+		if (b->par->so)
+			printf("parent->so : %d\n", b->par->so->n_node);
+		return (b);
+	}
+	else
+	{
+		if (test_search_nb(node, b->no))
+			return (b);
+		if (test_search_nb(node, b->ne))
+			return (b);
+		if (test_search_nb(node, b->se))
+			return (b);
+		if (test_search_nb(node, b->so))
+			return (b);
+		return (NULL);
+	}
+}
+
 int			is_child(t_qt *a, t_qt *b)
 {
 	if (a && (a->no == b || a->ne ==b || a->se == b || a->so == b))
@@ -206,89 +286,115 @@ t_cl 		*compare_colorlist(t_cl *a, t_cl **b)
 {
 	double	dist;
 	t_cl	*ret;
-	t_qt	**qt;
+	t_qt	*qt;
+	int		dir;
 	static int test = 0;
 
 	qt = NULL;
+	dir = 0;
 	ret = NULL;
 	if (!a || !*b || a == *b || !(*b)->qt || !(*(*b)->qt)
-	|| *(a->qt) == *((*b)->qt) || (*b)->deleted == 1 || (*(*b)->qt)->deleted == 1)
+	|| *(a->qt) == *((*b)->qt) || (*b)->deleted == 1 || (*(*b)->qt)->deleted == 1 || (*(*b)->qt)->n_node == 0)
 	{
-		printf(" => NOPE\n");
 		return (ret);
 	}
 	/*printf("%p - %p\n", (void*)*(a->qt), (void*)*(b->qt));*/
-	if (a && a->qt && b && (*b) && (*b)->qt)
+	if (a && a->qt && (*(a->qt)) && b && (*b) && (*b)->qt)
 	{
-		if (!is_child(*(a->qt), *((*b)->qt)) && is_subtree(*(a->qt), (*(*b)->qt)))
+		/* 9 et 309*/
+		printf("node a : %d et node b : %d\n", (*(a->qt))->n_node, (*(*b)->qt)->n_node);
+		if ((*(*b)->qt)->par != (*(a->qt)) && is_subtree((*(*b)->qt), *(a->qt)))
 			return (ret);
 		dist = get_dist_final(a->qt, (*b)->qt);
 		/*printf("op = %lu\n", op);*/
-		if (dist < 1000)
+		if (dist < 10)
 		{
-			printf(" => YES\n");
-			if (is_child(*(a->qt), *((*b)->qt)))
+			qt = (*(*b)->qt)->par;
+			if (qt && qt->no == (*(*b)->qt))
+				dir = 0;
+			else if (qt && qt->ne == (*(*b)->qt))
+				dir = 1;
+			else if (qt && qt->se == (*(*b)->qt))
+				dir = 2;
+			else if (qt && qt->so == (*(*b)->qt))
+				dir = 3;
+			if ((*(*b)->qt)->par == (*(a->qt)))
 			{
+				test++;
+				printf("===== OUI ======\n");
+				printf("b = %d, b->par = %d et a = %d\n", (*(*b)->qt)->n_node, (*(*b)->qt)->par->n_node, (*(a->qt))->n_node);
 				if ((*b)->prev)
 					ret = (*b)->prev;
 				else
 					ret = NULL;
-				delete_tree_and_colorlist((*b)->qt);
-				(*((*b)->qt)) = NULL;
+				delete_tree_and_colorlist(&((*(*b)->qt)->no));
+				delete_tree_and_colorlist(&((*(*b)->qt)->ne));
+				delete_tree_and_colorlist(&((*(*b)->qt)->se));
+				delete_tree_and_colorlist(&((*(*b)->qt)->so));
+				(*(*b)->qt)->no = NULL;
+				(*(*b)->qt)->ne = NULL;
+				(*(*b)->qt)->se = NULL;
+				(*(*b)->qt)->so = NULL;
 				return (ret);
 			}
-			test++;
-			qt = (*b)->qt;
+
 			/*printf("cmp = %p - test = %d\n", (void*)*qt, test);*/
 			(*b)->deleted = 1;
-			if ((*b)->next)
-				(*b)->next->prev = (*b)->prev;
+			/*if ((*b)->next)
+				(*b)->next->prev = (*b)->prev;*/
 			if ((*b)->prev)
 				ret = (*b)->prev;
 			else
 				ret = NULL;
 			delete_tree_and_colorlist((*b)->qt);
 			*b = NULL;
-			*qt = *(a->qt);
-			if (qt && (*qt))
-				(*qt)->deleted = 1;
+			if (dir == 0)
+				qt->no = *(a->qt);
+			if (dir == 1)
+				qt->ne = *(a->qt);
+			if (dir == 2)
+				qt->se = *(a->qt);
+			if (dir == 3)
+				qt->so = *(a->qt);
+			if (qt)
+				qt->deleted = 1;
 			/*b->qt = a->qt;*/
 			/**(b->qt) = *(a->qt);*/
 			/*printf("dist = %f\n", dist);*/
 			return (ret);
 		}
 	}
-	printf(" => NOPE\n");
 	return (ret);
 }
 
-void 		minimize_colorlist(t_clc *c)
+void 		minimize_colorlist(t_clc **c)
 {
 	t_cl	*cmp;
 	t_cl	*last;
 	int line;
 
-	if (!c || !c->last || c->last == c->first)
+	if (!(*c) || !(*c)->last || (*c)->last == (*c)->first)
 		return ;
-	last = c->last;
-	cmp = c->last->prev;
-	line = count_color_line(c);
+	last = (*c)->last;
+	cmp = (*c)->last->prev;
+	line = count_color_line((*c));
 	printf("line = %d\n", line);
-	display_colorlist(c);
 	/*1 2 3*/
 	while (last)
 	{
 		while (cmp && cmp != last)
 		{
-			printf("last = %p - cl = %p - ", (void*)last, (void*)cmp);
+			/*display_colorlist((*c));
+			display_colorlist_otherway((*c));
+			display_colorlist(test_ci->index);
+			display_colorlist_otherway(test_ci->index);*/
+			/*printf("\nlast = %p - cl = %p - ", (void*)last, (void*)cmp);
 			if (cmp && cmp->deleted != 1 && cmp->qt && (*(cmp->qt)) && (*(cmp->qt))->n_node && last->qt && (*(last->qt)) && (*(last->qt))->n_node)
-				printf("node last : %d - node : %d", (*(last->qt))->n_node, (*(cmp->qt))->n_node);
+				printf("node last : %d - node : %d", (*(last->qt))->n_node, (*(cmp->qt))->n_node);*/
 			cmp = compare_colorlist(last, &cmp);
-			printf("\n");
 		}
-		display_colorlist(c);
-		if (c && c->last)
-			cmp = c->last->prev;
+		if ((*c) && (*c)->last)
+			cmp = (*c)->last->prev;
 		last = last->prev;
 	}
 }
@@ -298,9 +404,13 @@ void 		minimize2(t_ci **c)
 	t_ci	*tmp;
 
 	tmp = *c;
+	test_ci = *c;
 	while (tmp)
 	{
-		minimize_colorlist(tmp->index);
+		minimize_colorlist(&(tmp->index));
 		tmp = tmp->next;
+		(*c) = (*c)->next;
 	}
+	/*test_search_nb(79, test_racine);
+	test_search_nb(63, test_racine);*/
 }

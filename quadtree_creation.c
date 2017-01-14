@@ -17,6 +17,7 @@ t_qt		*create_tree(void)
 	new_qt->color = MLV_COLOR_BLUE;
 	new_qt->cl = NULL;
 	new_qt->deleted = 0;
+	new_qt->parent = NULL;
 	n_node++;
 	return (new_qt);
 }
@@ -78,11 +79,13 @@ void		fill_zone(t_zone *zone, int x1, int x2, int y1, int y2)
 	(*zone).y2 = y2;
 }
 
-void 		create_list_and_tree(t_qt **qt, t_lc **l, MLV_Image *img, int x1, int x2, int y1, int y2)
+void 		create_list_and_tree(t_qt **parent, t_qt **qt, t_lc **l, MLV_Image *img, int x1, int x2, int y1, int y2)
 {
 	t_zone	zone;
 
 	(*qt) = create_tree();
+	(*qt)->parent = parent;
+	(*qt)->par = *parent;
 	(*qt)->dist = get_error_dist(img, x1, x2, y1, y2, qt);;
 	if ((*qt)->dist <= 80.0 && (x2 - x1) > 1 && (y2 - y1) > 1) /* pour accelerer la creation meme si perte */
 		return ;
@@ -102,13 +105,13 @@ int			gen_tree(t_lc **l, MLV_Image *img, t_qt **qt, t_zone zone)
 		add_order(&(*l)->first, &(*l)->last,(*qt), (*qt)->dist, zone);
 	}
 	if (!(*qt)->no)
-		create_list_and_tree(&(*qt)->no, l, img, save.x1, d(save.x1, save.x2), save.y1, d(save.y1, save.y2));
+		create_list_and_tree(qt, &(*qt)->no, l, img, save.x1, d(save.x1, save.x2), save.y1, d(save.y1, save.y2));
 	if (!(*qt)->ne)
-		create_list_and_tree(&(*qt)->ne, l, img, d(save.x1, save.x2), save.x2, save.y1, d(save.y1, save.y2));
+		create_list_and_tree(qt, &(*qt)->ne, l, img, d(save.x1, save.x2), save.x2, save.y1, d(save.y1, save.y2));
 	if (!(*qt)->se)
-		create_list_and_tree(&(*qt)->se, l, img, d(save.x1, save.x2), save.x2, d(save.y1, save.y2), save.y2);
+		create_list_and_tree(qt, &(*qt)->se, l, img, d(save.x1, save.x2), save.x2, d(save.y1, save.y2), save.y2);
 	if (!(*qt)->so)
-		create_list_and_tree(&(*qt)->so, l, img, save.x1, d(save.x1, save.x2), d(save.y1, save.y2), save.y2);
+		create_list_and_tree(qt, &(*qt)->so, l, img, save.x1, d(save.x1, save.x2), d(save.y1, save.y2), save.y2);
 	return (1);
 }
 

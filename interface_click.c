@@ -47,6 +47,25 @@ int 		click_open_img_button(int x, int y)
 	return (0);
 }
 
+void 		display_colorlist_otherway(t_clc *clc)
+{
+	t_cl	*tmp;
+
+	if (!clc)
+	{
+		printf("vide\n");
+		return ;
+	}
+	tmp = clc->last;
+	while (tmp)
+	{
+		if ((*(tmp->qt)))
+			printf("%d - ", (*(tmp->qt))->n_node);
+		tmp = tmp->prev;
+	}
+	printf("\n");
+}
+
 void 		display_colorlist(t_clc *clc)
 {
 	t_cl	*tmp;
@@ -74,23 +93,32 @@ void 		test_colorlist(t_ci *ci)
 
 	i = 0;
 	tmp = ci;
-	while (tmp && i < 30)
+	while (tmp && i < 1) /* 30 = long | 7 = short*/
 	{
+		display_colorlist(tmp->index);
 		tmp = tmp->next;
 		i++;
 	}
-	tl = tmp->index->last;
+	return ;
+	tl = tmp->index->last->prev;
 	display_colorlist(tmp->index);
 
 	MLV_wait_mouse(0, 0);
-	while (tl)
+	tl = delete_any_colorlist(&(tmp->index), tl);
+	display_colorlist(tmp->index);
+	tl = delete_any_colorlist(&(tmp->index), tl);
+	display_colorlist(tmp->index);
+	MLV_wait_mouse(0, 0);
+	/*while (tl)
 	{
+		display_colorlist(tmp->index);
 		if (tl && tl->deleted != 1 && tl->qt && (*(tl->qt))
 			&& (*(tl->qt))->n_node)
 			printf("node : %d\n", (*(tl->qt))->n_node);
 		tl = delete_any_colorlist(&(tmp->index), tl);
+		printf("\n list : ");
 		MLV_wait_mouse(0, 0);
-	}
+	}*/
 }
 
 void 		click_interface(t_qt **qt, char *filename)
@@ -118,12 +146,13 @@ void 		click_interface(t_qt **qt, char *filename)
 				/*analyze_minimize_and_draw(qt);*/
 				printf("Debut minimisation\n");
 				update_colorlist(&ci, qt);
+				test_racine = *qt;
 				/*test_colorlist(ci);*/
 				minimize2(&ci);
 				printf("pret ?\n");
 				MLV_wait_mouse(0, 0);
 				printf("lets go !\n");
-				MLV_clear_window(MLV_COLOR_BLACK);
+				MLV_clear_window(MLV_COLOR_BLUE);
 				draw_quadtree(*qt, 0, TAILLE_X, 0, TAILLE_Y);
 				MLV_actualise_window();
 				printf("Fin minimisation\n");

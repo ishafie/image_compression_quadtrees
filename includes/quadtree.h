@@ -4,7 +4,7 @@
 # define PERTE 6
 # define TAILLE_X 512
 # define TAILLE_Y 512
-# define OP 100 /* 65536 - 45sec */
+# define OP 1000 /* 65536 - 45sec */
 # define DISPLAY 0
 # define TRUE 1
 
@@ -39,6 +39,8 @@ typedef struct					s_color
 
 typedef struct					s_quadtree
 {
+	struct s_quadtree			**parent;
+	struct s_quadtree			*par;
 	struct s_quadtree			*no;
 	struct s_quadtree			*ne;
 	struct s_quadtree			*se;
