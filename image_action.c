@@ -82,9 +82,7 @@ void		draw_quadtree(t_qt *qt, int x1, int x2, int y1, int y2)
 {
 	if (!qt)
 		return ;
-	/*if (qt->par)
-		printf("parent %d :\n", qt->par->n_node);
-	printf("node = %d\n", qt->n_node);*/
+	/*printf("node = %d\n", qt->n_node);*/
 	if (qt && is_leaf(qt))
 	{
 		/*MLV_draw_filled_circle(x1 + (x2 - x1)/2, y1 + (y2 - y1)/2, (x2 - x1)/2, qt->color);*/
@@ -95,7 +93,6 @@ void		draw_quadtree(t_qt *qt, int x1, int x2, int y1, int y2)
 	draw_quadtree(qt->ne, d(x1, x2), x2, y1, d(y1, y2));
 	draw_quadtree(qt->se, d(x1, x2), x2, d(y1, y2), y2);
 	draw_quadtree(qt->so, x1, d(x1, x2), d(y1, y2), y2);
-
 }
 
 MLV_Color	get_average_color_from_image(MLV_Image *img, int x1, int x2, int y1, int y2)

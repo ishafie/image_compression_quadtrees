@@ -1,6 +1,6 @@
 #include "includes/quadtree.h"
 
-uint8_t     convert_to_dec(FILE *fp)
+static uint8_t     convert_to_dec(FILE *fp)
 {
     char        bin[8];
     char        *binPtr;
@@ -13,7 +13,6 @@ uint8_t     convert_to_dec(FILE *fp)
     {
 		if (fread(&bin[i], 1, 1, fp) == 0)
 			return ((uint8_t)total);
-		/*printf("%d", bin[i]);*/
         i++;
     }
     i = 0;
@@ -28,16 +27,13 @@ uint8_t     convert_to_dec(FILE *fp)
     return ((uint8_t)total);
 }
 
-t_color	   start_gen_color(FILE *fp)
+static t_color	   start_gen_color(FILE *fp)
 {
     t_color color;
 
     color.red = convert_to_dec(fp);
-    /*printf("][");*/
     color.green = convert_to_dec(fp);
-    /*printf("][");*/
     color.blue = convert_to_dec(fp);
-    /*printf("][");*/
     color.alpha = convert_to_dec(fp);
     return (color);
 }
@@ -51,10 +47,9 @@ void       decode_bin(t_qt **qt, FILE *fp)
         return ;
 	if (fread(&c, 1, 1, fp) == 0)
 		return ;
-    *qt = create_tree();
+    *qt = create_tree(1);
 	if (c == 0)
     {
-        /*printf("0");*/
         decode_bin(&(*qt)->no, fp);
         decode_bin(&(*qt)->ne, fp);
         decode_bin(&(*qt)->se, fp);
@@ -64,12 +59,11 @@ void       decode_bin(t_qt **qt, FILE *fp)
     {
         color = start_gen_color(fp);
         (*qt)->color = MLV_convert_rgba_to_color(color.red, color.green, color.blue, color.alpha);
-		/*printf("]\n");*/
         return ;
     }
 }
 
-MLV_Color	gen_black_or_white(FILE *fp)
+static MLV_Color	gen_black_or_white(FILE *fp)
 {
 	char	c;
 
@@ -88,7 +82,7 @@ void       	decode_bin_nocolor(t_qt **qt, FILE *fp)
         return ;
 	if (fread(&c, 1, 1, fp) == 0)
 		return ;
-    *qt = create_tree();
+    *qt = create_tree(1);
 	if (c == 0)
     {
         decode_bin_nocolor(&(*qt)->no, fp);

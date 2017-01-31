@@ -1,6 +1,6 @@
 #include "includes/quadtree.h"
 
-t_le	*create_le(unsigned int n, t_qt *ptr)
+static t_le	*create_le(unsigned int n, t_qt *ptr)
 {
 	t_le	*new;
 

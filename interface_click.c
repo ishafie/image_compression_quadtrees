@@ -1,4 +1,6 @@
+#include "includes/quadtree.h"
 #include "includes/colorlist.h"
+#include "includes/err.h"
 
 int 		click_save_button_bin_color(int x, int y)
 {
@@ -85,49 +87,98 @@ void 		display_colorlist(t_clc *clc)
 	printf("\n");
 }
 
-void 		test_colorlist(t_ci *ci)
+
+void 		set_garbage(t_qt **qt, t_qt **g_c)
 {
-	t_ci	*tmp;
-	t_cl	*tl;
-	int		i;
+	unsigned int n;
 
-	i = 0;
-	tmp = ci;
-	while (tmp && i < 1) /* 30 = long | 7 = short*/
-	{
-		display_colorlist(tmp->index);
-		tmp = tmp->next;
-		i++;
-	}
-	return ;
-	tl = tmp->index->last->prev;
-	display_colorlist(tmp->index);
-
-	MLV_wait_mouse(0, 0);
-	tl = delete_any_colorlist(&(tmp->index), tl);
-	display_colorlist(tmp->index);
-	tl = delete_any_colorlist(&(tmp->index), tl);
-	display_colorlist(tmp->index);
-	MLV_wait_mouse(0, 0);
-	/*while (tl)
-	{
-		display_colorlist(tmp->index);
-		if (tl && tl->deleted != 1 && tl->qt && (*(tl->qt))
-			&& (*(tl->qt))->n_node)
-			printf("node : %d\n", (*(tl->qt))->n_node);
-		tl = delete_any_colorlist(&(tmp->index), tl);
-		printf("\n list : ");
-		MLV_wait_mouse(0, 0);
-	}*/
+	n = 0;
+	if (!qt || !(*qt))
+		return ;
+	set_garbage(&(*qt)->no, g_c);
+	set_garbage(&(*qt)->ne, g_c);
+	set_garbage(&(*qt)->se, g_c);
+	set_garbage(&(*qt)->so, g_c);
+	n = (*qt)->n_node;
+	(*qt)->deleted = 1;
+	g_c[n] = *qt;
 }
 
-void 		click_interface(t_qt **qt, char *filename)
+void 		delete_garbage_tree(t_qt **garbage_collector)
+{
+	int		i;
+	t_qt	**tmp;
+
+	tmp = NULL;
+	i = (OP_MINI * 4);
+	while (i)
+	{
+		if (garbage_collector[i])
+			set_garbage(&garbage_collector[i], garbage_collector);
+		i--;
+	}
+	i = (OP_MINI * 4);
+	while (i)
+	{
+		if (garbage_collector[i])
+		{
+			if ((garbage_collector[i])->par && (garbage_collector[i])->par->no == garbage_collector[i])
+				tmp = &(garbage_collector[i])->par->no;
+			if ((garbage_collector[i])->par && (garbage_collector[i])->par->ne == garbage_collector[i])
+				tmp = &(garbage_collector[i])->par->ne;
+			if ((garbage_collector[i])->par && (garbage_collector[i])->par->se == garbage_collector[i])
+				tmp = &(garbage_collector[i])->par->se;
+			if ((garbage_collector[i])->par && (garbage_collector[i])->par->so == garbage_collector[i])
+				tmp = &(garbage_collector[i])->par->so;
+			/*free(garbage_collector[i]);*/
+			garbage_collector[i] = NULL;
+			if (tmp && *tmp)
+				*tmp = NULL;
+		}
+		i--;
+	}
+}
+
+/*void 		delete_garbage_tree(t_qt **qt, t_qt **g_c)
+{
+	unsigned int n;
+
+	n = 0;
+	if (!qt || !(*qt))
+		return ;
+	if ((*qt)->no)
+		delete_garbage_tree(&(*qt)->no, g_c);
+	if ((*qt)->ne)
+		delete_garbage_tree(&(*qt)->ne, g_c);
+	if ((*qt)->se)
+		delete_garbage_tree(&(*qt)->se, g_c);
+	if ((*qt)->so)
+		delete_garbage_tree(&(*qt)->so, g_c);
+	n = (*qt)->n_node;
+	if ((*qt)->deleted == 1)
+		return ;
+	(*qt)->no = NULL;
+	(*qt)->ne = NULL;
+	(*qt)->se = NULL;
+	(*qt)->so = NULL;
+	(*qt)->par = NULL;
+	(*qt)->deleted = 1;
+	free(*qt);
+	*qt = NULL;
+	g_c[n] = NULL;
+}*/
+
+void 		click_interface(t_qt **qt, char *filename, MLV_Image *img)
 {
 	int		x;
 	int		y;
 	int		mini;
 	t_ci	*ci;
+	t_list	*l_dist;
+	t_lc	*lc;
+	t_qt	**garbage_collector;
 
+	garbage_collector = NULL;
 	ci = NULL;
 	mini = 0;
 	while (42 && qt)
@@ -142,19 +193,22 @@ void 		click_interface(t_qt **qt, char *filename)
 		{
 			if (mini == 0)
 			{
+				garbage_collector = (t_qt**)malloc(sizeof(t_qt*) * (OP_MINI * 4 + 1));
+				if (!garbage_collector)
+					malloc_handling();
 				ci = NULL;
-				/*analyze_minimize_and_draw(qt);*/
+				delete_tree(qt);
+				l_dist = NULL;
+				lc = create_list_container(l_dist);
+				create_tree(0); /* reset du nombre de noeud */
+				quadtree_maker2(&lc, img, qt, OP_MINI);
 				printf("Debut minimisation\n");
 				update_colorlist(&ci, qt);
-				test_racine = *qt;
-				/*test_colorlist(ci);*/
-				minimize2(&ci);
-				printf("pret ?\n");
-				MLV_wait_mouse(0, 0);
-				printf("lets go !\n");
-				MLV_clear_window(MLV_COLOR_BLUE);
-				draw_quadtree(*qt, 0, TAILLE_X, 0, TAILLE_Y);
-				MLV_actualise_window();
+				minimize2(&ci, &garbage_collector);
+				delete_colorlist(&ci);
+				MLV_clear_window(MLV_COLOR_BLACK);
+				create_interface(*qt);
+				delete_garbage_tree(garbage_collector);
 				printf("Fin minimisation\n");
 			}
 			else
@@ -162,10 +216,10 @@ void 		click_interface(t_qt **qt, char *filename)
 			mini = 1;
 		}
 		if (click_save_button_graph_color(x, y))
-			encodage_graph(*qt, filename, COLOR);
+			hub_encode_graph(*qt, filename, COLOR);
 		if (click_save_button_graph_bandw(x, y))
-			encodage_graph(*qt, filename, NOCOLOR);
+			hub_encode_graph(*qt, filename, NOCOLOR);
 		if (click_open_img_button(x, y))
-			open_img(qt, &filename, &mini);
+			open_img(qt, &filename, &mini, &img);
 	}
 }

@@ -1,5 +1,6 @@
 #include "includes/quadtree.h"
 #include "includes/get_next_line.h"
+#include "includes/err.h"
 
 static char		*get_path(const char *str)
 {

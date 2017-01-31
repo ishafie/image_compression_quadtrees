@@ -1,6 +1,7 @@
 #include "includes/colorlist.h"
+#include "includes/err.h"
 
-t_cl			*create_colorlist(t_qt **qt, t_clc **c)
+static t_cl			*create_colorlist(t_qt **qt, t_clc **c)
 {
 	t_cl		*newcl;
 
@@ -17,7 +18,7 @@ t_cl			*create_colorlist(t_qt **qt, t_clc **c)
 	return (newcl);
 }
 
-t_clc			*create_colorlist_container(t_qt **qt)
+static t_clc			*create_colorlist_container(t_qt **qt)
 {
 	t_clc		*newclc;
 
@@ -29,7 +30,7 @@ t_clc			*create_colorlist_container(t_qt **qt)
 	return (newclc);
 }
 
-t_ci			*create_colorlist_index(t_qt **qt)
+static t_ci			*create_colorlist_index(t_qt **qt)
 {
 	t_ci		*newci;
 
@@ -168,4 +169,59 @@ void 			addfront_colorindex(t_ci **c, t_qt **qt)
 	newci = create_colorlist_index(qt);
 	newci->next = *c;
 	*c = newci;
+}
+
+void 			delete_all_colorlist(t_clc **c)
+{
+	t_cl		*tmp;
+	t_cl		*prev;
+
+	prev = NULL;
+	if (!c || !*c)
+		return ;
+	tmp = (*c)->first;
+	while (tmp)
+	{
+		if (prev)
+		{
+			free(prev);
+			prev = NULL;
+		}
+		prev = tmp;
+		tmp = tmp->next;
+	}
+	(*c)->first = NULL;
+	(*c)->last = NULL;
+	free(*c);
+}
+
+void 			delete_colorlist(t_ci **c)
+{
+	t_ci		*tmp;
+	t_ci		*prev;
+
+	prev = NULL;
+	tmp = *c;
+	if (!*c)
+	{
+		return ;
+	}
+	while (tmp)
+	{
+		if (prev)
+		{
+			prev->index = NULL;
+			free(prev);
+			prev = NULL;
+		}
+		delete_all_colorlist(&(tmp->index));
+		prev = tmp;
+		tmp = tmp->next;
+	}
+	if (prev)
+	{
+		prev->index = NULL;
+		free(prev);
+		prev = NULL;
+	}
 }

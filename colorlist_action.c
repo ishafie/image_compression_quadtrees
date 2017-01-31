@@ -1,3 +1,4 @@
+#include "includes/quadtree.h"
 #include "includes/colorlist.h"
 
 int			count_color(t_ci *c)
@@ -33,7 +34,7 @@ int			count_color_line(t_clc *c)
 	return (i);
 }
 
-t_ci		*check_colorindex(t_ci **ci, t_qt **qt)
+static t_ci		*check_colorindex(t_ci **ci, t_qt **qt)
 {
 	t_ci	*tmp;
 	t_qt	**qtmp;

@@ -1,20 +1,22 @@
+#include "includes/quadtree.h"
 #include "includes/colorlist.h"
+#include "includes/err.h"
 
-void 		analyze_minimize_and_draw(t_qt **qt)
+/*void 		analyze_minimize_and_draw(t_qt **qt)
 {
 	analyze_and_minimize(qt);
 	MLV_clear_window(MLV_COLOR_BLACK);
 	create_interface(*qt);
-}
+}*/
 
-void 		test_draw(t_qt *qt)
+/*void 		test_draw(t_qt *qt)
 {
 	MLV_clear_window(MLV_COLOR_BLACK);
 	draw_quadtree(qt, 0, TAILLE_X, 0, TAILLE_Y);
 	MLV_actualise_window();
-}
+}*/
 
-void 		parent_pointer(t_qt **parent, t_qt **qt, t_qt **new)
+/*void 		parent_pointer(t_qt **parent, t_qt **qt, t_qt **new)
 {
 	if (!*parent)
 		return ;
@@ -39,14 +41,12 @@ void 		parent_pointer(t_qt **parent, t_qt **qt, t_qt **new)
 		free(*qt);
 		(*parent)->so = *new;
 	}
-}
+}*/
 
-void 	delete_inner_tree(t_qt **racine, t_qt **qt)
+/*void 	delete_inner_tree(t_qt **racine, t_qt **qt)
 {
 	if (!(*qt) || !(*racine))
 		return ;
-	/*test_draw(*parent);
-	MLV_wait_mouse(0, 0);*/
 	if ((*qt)->no)
 	{
 		free_tree(&(*qt)->no);
@@ -64,12 +64,9 @@ void 	delete_inner_tree(t_qt **racine, t_qt **qt)
 		free_tree(&(*qt)->so);
 	}
 	*qt = *racine;
-	/*parent_pointer(parent, qt, racine);*/
-	/*test_draw(*parent);
-	MLV_wait_mouse(0, 0);*/
-}
+}*/
 
-void	 	compare_tree(t_ldc **ldc, t_qt **qt, t_qt **cmp, t_qt **parent)
+/*void	 	compare_tree(t_ldc **ldc, t_qt **qt, t_qt **cmp, t_qt **parent)
 {
 	double	dist;
 	static int i = 0;
@@ -88,7 +85,6 @@ void	 	compare_tree(t_ldc **ldc, t_qt **qt, t_qt **cmp, t_qt **parent)
 			i++;
 			add_order_ld(&(*ldc)->first, &(*ldc)->last, qt, cmp, dist);
 			(void)parent;
-			/*delete_inner_tree(qt, cmp, parent);*/
 			return ;
 		}
 		if ((*cmp) && (*cmp)->no)
@@ -100,9 +96,9 @@ void	 	compare_tree(t_ldc **ldc, t_qt **qt, t_qt **cmp, t_qt **parent)
 		if ((*cmp) && (*cmp)->so)
 			compare_tree(ldc, qt, &(*cmp)->so, cmp);
 	}
-}
+}*/
 
-void 	mini_with_loss(t_ldc **ldc, t_qt **racine, t_qt **qt)
+/*void 	mini_with_loss(t_ldc **ldc, t_qt **racine, t_qt **qt)
 {
 
 	if (!*racine || !(*qt && *racine && color_equal((*racine)->color, (*qt)->color, 90)))
@@ -116,9 +112,9 @@ void 	mini_with_loss(t_ldc **ldc, t_qt **racine, t_qt **qt)
 		mini_with_loss(ldc, &((*racine)->se), qt);
 	if ((*racine) && (*racine)->so)
 		mini_with_loss(ldc, &((*racine)->so), qt);
-}
+}*/
 
-void 	free_and_relink_list(t_ldc **ldc)
+/*void 	free_and_relink_list(t_ldc **ldc)
 {
 	t_ld	*tmp;
 
@@ -134,9 +130,9 @@ void 	free_and_relink_list(t_ldc **ldc)
 		}
 		tmp = tmp->next;
 	}
-}
+}*/
 
-void 	analyze_and_minimize(t_qt **qt)
+/*void 	analyze_and_minimize(t_qt **qt)
 {
 	t_ldc	*ldc;
 	t_ld	*ld;
@@ -171,9 +167,8 @@ void 	analyze_and_minimize(t_qt **qt)
 	mini_with_loss(&ldc, &(*qt)->so, &(*qt)->se);
 	printf("100%%\n");
 	compare_tree(NULL, NULL, NULL, NULL);
-	/*display_list_dist(ldc->first);*/
-	/*free_and_relink_list(&ldc);*/
 }
+*/
 
 t_qt		*is_subtree(t_qt *a, t_qt *b)
 {
@@ -282,7 +277,7 @@ int			is_child(t_qt *a, t_qt *b)
 	return (0);
 }
 
-t_cl 		*compare_colorlist(t_cl *a, t_cl **b)
+t_cl 		*compare_colorlist(t_cl *a, t_cl **b, t_qt **g_c)
 {
 	double	dist;
 	t_cl	*ret;
@@ -302,13 +297,13 @@ t_cl 		*compare_colorlist(t_cl *a, t_cl **b)
 	if (a && a->qt && (*(a->qt)) && b && (*b) && (*b)->qt)
 	{
 		/* 9 et 309*/
-		printf("node a : %d et node b : %d\n", (*(a->qt))->n_node, (*(*b)->qt)->n_node);
 		if ((*(*b)->qt)->par != (*(a->qt)) && is_subtree((*(*b)->qt), *(a->qt)))
 			return (ret);
 		dist = get_dist_final(a->qt, (*b)->qt);
 		/*printf("op = %lu\n", op);*/
-		if (dist < 10)
+		if (dist < 15)
 		{
+			test++;
 			qt = (*(*b)->qt)->par;
 			if (qt && qt->no == (*(*b)->qt))
 				dir = 0;
@@ -320,17 +315,22 @@ t_cl 		*compare_colorlist(t_cl *a, t_cl **b)
 				dir = 3;
 			if ((*(*b)->qt)->par == (*(a->qt)))
 			{
-				test++;
-				printf("===== OUI ======\n");
-				printf("b = %d, b->par = %d et a = %d\n", (*(*b)->qt)->n_node, (*(*b)->qt)->par->n_node, (*(a->qt))->n_node);
 				if ((*b)->prev)
 					ret = (*b)->prev;
 				else
 					ret = NULL;
-				delete_tree_and_colorlist(&((*(*b)->qt)->no));
+				/*delete_tree_and_colorlist(&((*(*b)->qt)->no));
 				delete_tree_and_colorlist(&((*(*b)->qt)->ne));
 				delete_tree_and_colorlist(&((*(*b)->qt)->se));
-				delete_tree_and_colorlist(&((*(*b)->qt)->so));
+				delete_tree_and_colorlist(&((*(*b)->qt)->so));*/
+				if ((*(*b)->qt)->no)
+					g_c[(*(*b)->qt)->no->n_node] = (*(*b)->qt)->no;
+				if ((*(*b)->qt)->ne)
+					g_c[(*(*b)->qt)->ne->n_node] = (*(*b)->qt)->ne;
+				if ((*(*b)->qt)->se)
+					g_c[(*(*b)->qt)->se->n_node] = (*(*b)->qt)->se;
+				if ((*(*b)->qt)->so)
+					g_c[(*(*b)->qt)->so->n_node] = (*(*b)->qt)->so;
 				(*(*b)->qt)->no = NULL;
 				(*(*b)->qt)->ne = NULL;
 				(*(*b)->qt)->se = NULL;
@@ -346,7 +346,10 @@ t_cl 		*compare_colorlist(t_cl *a, t_cl **b)
 				ret = (*b)->prev;
 			else
 				ret = NULL;
-			delete_tree_and_colorlist((*b)->qt);
+			/*delete_tree_and_colorlist((*b)->qt);*/
+			g_c[(*(*b)->qt)->n_node] = (*(*b)->qt);
+			(*(*b)->qt) = NULL;
+			(*b)->qt = NULL;
 			*b = NULL;
 			if (dir == 0)
 				qt->no = *(a->qt);
@@ -367,49 +370,40 @@ t_cl 		*compare_colorlist(t_cl *a, t_cl **b)
 	return (ret);
 }
 
-void 		minimize_colorlist(t_clc **c)
+void 		minimize_colorlist(t_clc **c, t_qt **g_c)
 {
 	t_cl	*cmp;
 	t_cl	*last;
-	int line;
+	/*int line;*/
 
 	if (!(*c) || !(*c)->last || (*c)->last == (*c)->first)
 		return ;
 	last = (*c)->last;
 	cmp = (*c)->last->prev;
-	line = count_color_line((*c));
-	printf("line = %d\n", line);
-	/*1 2 3*/
+	/*line = count_color_line((*c));*/
 	while (last)
 	{
 		while (cmp && cmp != last)
-		{
-			/*display_colorlist((*c));
-			display_colorlist_otherway((*c));
-			display_colorlist(test_ci->index);
-			display_colorlist_otherway(test_ci->index);*/
-			/*printf("\nlast = %p - cl = %p - ", (void*)last, (void*)cmp);
-			if (cmp && cmp->deleted != 1 && cmp->qt && (*(cmp->qt)) && (*(cmp->qt))->n_node && last->qt && (*(last->qt)) && (*(last->qt))->n_node)
-				printf("node last : %d - node : %d", (*(last->qt))->n_node, (*(cmp->qt))->n_node);*/
-			cmp = compare_colorlist(last, &cmp);
-		}
+			cmp = compare_colorlist(last, &cmp, g_c);
 		if ((*c) && (*c)->last)
 			cmp = (*c)->last->prev;
 		last = last->prev;
 	}
 }
 
-void 		minimize2(t_ci **c)
+void 		minimize2(t_ci **c, t_qt ***garbage_collector)
 {
 	t_ci	*tmp;
+	int		i;
 
+	i = 0;
 	tmp = *c;
-	test_ci = *c;
+	while (i < OP_MINI * 4 + 1)
+		(*garbage_collector)[i++] = NULL;
 	while (tmp)
 	{
-		minimize_colorlist(&(tmp->index));
+		minimize_colorlist(&(tmp->index), *garbage_collector);
 		tmp = tmp->next;
-		(*c) = (*c)->next;
 	}
 	/*test_search_nb(79, test_racine);
 	test_search_nb(63, test_racine);*/

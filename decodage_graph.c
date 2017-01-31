@@ -1,23 +1,39 @@
 #include "includes/quadtree.h"
 #include "includes/get_next_line.h"
+#include "includes/err.h"
 
-void 		decodage(const char *filename, t_qt **qt, int color)
+void 		hub_decode_graph(const char *filename, t_qt **qt, int color)
 {
 	int				fd;
-	t_le			*l;
+	t_qt			**tab;
+	int				i;
 
-	l = NULL;
+	i = 0;
+	tab = (t_qt**)malloc(sizeof(t_qt*) * (OP * 4 + 1));
+	if (!tab)
+		malloc_handling();
+	while (i < (OP * 4 + 1))
+		tab[i++] = NULL;
 	fd = open(filename, O_RDONLY);
 	if (fd == -1)
 		err_what(FILE_ISSUE);
 	if (color == COLOR)
-		decode_graph(qt, fd, &l);
+	{
+		printf("Decodage en couleur...\n");
+		decode_graph(qt, fd, tab);
+		/*decode_graph(qt, fd, &l);*/
+	}
 	else
-		decode_graph_nocolor(qt, fd, &l);
+	{
+		printf("Decodage en noir et blanc...\n");
+		decode_graph_nocolor(qt, fd, tab);
+	}
+	printf("Decodage terminé.\n");
+	free(tab);
 	close(fd);
 }
 
-int 		get_node(const char *line, char n_node[16], int *i, char *pos)
+static int 		get_node(const char *line, char n_node[16], int *i, char *pos)
 {
 	int		index;
 
@@ -37,68 +53,7 @@ int 		get_node(const char *line, char n_node[16], int *i, char *pos)
 	return (0);
 }
 
-void 		search_or_create(t_qt **tree, const char n_node[16], t_le **l, char pos)
-{
-
-	unsigned int		n;
-	t_qt				**qt;
-
-	if (pos == 0)
-		qt = tree;
-	else if (pos == 'a')
-		qt = &(*tree)->no;
-	else if (pos == 'b')
-		qt = &(*tree)->ne;
-	else if (pos == 'c')
-		qt = &(*tree)->se;
-	else if (pos == 'd')
-		qt = &(*tree)->so;
-	n = (unsigned int)strtol(n_node, NULL, 16);
-	*qt = search_node(n, l);
-	if (!*qt)
-	{
-		*qt = create_tree();
-		(*qt)->n_node = n;
-		add_node_to_le(n, l, *qt);
-	}
-}
-
-void 		create_node_from_line(t_qt **qt, const char *line, t_le **l)
-{
-
-	int					i;
-	int					ret;
-	char				n_node[16];
-	char				pos;
-	char				save;
-
-	pos = 0;
-	i = 0;
-	ret = get_node(line, n_node, &i, &save);
-	pos = save;
-	search_or_create(qt, n_node, l, 0);
-	if (ret)
-		return ;
-	ret = get_node(line, n_node, &i, &save);
-	search_or_create(qt, n_node, l, pos);
-	if (ret)
-		return ;
-	pos = save;
-	ret = get_node(line, n_node, &i, &save);
-	search_or_create(qt, n_node, l, pos);
-	if (ret)
-		return ;
-	pos = save;
-	ret = get_node(line, n_node, &i, &save);
-	search_or_create(qt, n_node, l, pos);
-	if (ret)
-		return ;
-	pos = save;
-	get_node(line, n_node, &i, &save);
-	search_or_create(qt, n_node, l, pos);
-}
-
-int 		get_leaf(const char *line, char color[16], int *i)
+static int 		get_leaf(const char *line, char color[16], int *i)
 {
 	int		index;
 
@@ -116,7 +71,7 @@ int 		get_leaf(const char *line, char color[16], int *i)
 	return (0);
 }
 
-int 		get_color(const char *line, char color[16], int *i)
+static int 		get_color(const char *line, char color[16], int *i)
 {
 	int		index;
 
@@ -133,7 +88,58 @@ int 		get_color(const char *line, char color[16], int *i)
 	return (0);
 }
 
-void 		create_leaf_from_line(t_qt **qt, const char *line, t_le **l)
+static void 		create_leaf_from_line_nocolor(t_qt **qt, const char *line, t_qt **tab)
+{
+	unsigned int	n;
+	int				i;
+	char			color[16];
+
+	i = 0;
+	get_leaf(line, color, &i);
+	n = (unsigned int)strtol(color, NULL, 16);
+	if (tab[n])
+		*qt = tab[n];
+	else
+	{
+		*qt = create_tree(1);
+		(*qt)->n_node = n;
+		tab[n] = *qt;
+	}
+	(*qt)->n_node = n;
+	if (line[i] == '0')
+		(*qt)->color = MLV_COLOR_BLACK;
+	else
+		(*qt)->color = MLV_COLOR_WHITE;
+}
+
+static void 		search_or_create(t_qt **tree, const char n_node[16], t_qt **tab, char pos)
+{
+
+	unsigned int		n;
+	t_qt				**qt;
+
+	if (pos == 0)
+		qt = tree;
+	else if (pos == 'a')
+		qt = &(*tree)->no;
+	else if (pos == 'b')
+		qt = &(*tree)->ne;
+	else if (pos == 'c')
+		qt = &(*tree)->se;
+	else if (pos == 'd')
+		qt = &(*tree)->so;
+	n = (unsigned int)strtol(n_node, NULL, 16);
+	if (tab[n])
+		*qt = tab[n];
+	else
+	{
+		*qt = create_tree(1);
+		(*qt)->n_node = n;
+		tab[n] = *qt;
+	}
+}
+
+static void 		create_leaf_from_line(t_qt **qt, const char *line, t_qt **tab)
 {
 	unsigned int	n;
 	int				i;
@@ -143,12 +149,13 @@ void 		create_leaf_from_line(t_qt **qt, const char *line, t_le **l)
 	i = 0;
 	get_leaf(line, color, &i);
 	n = (unsigned int)strtol(color, NULL, 16);
-	*qt = search_node(n, l);
-	if (!*qt)
+	if (tab[n])
+		*qt = tab[n];
+	else
 	{
-		*qt = create_tree();
+		*qt = create_tree(1);
 		(*qt)->n_node = n;
-		add_node_to_le(n, l, *qt);
+		tab[n] = *qt;
 	}
 	(*qt)->n_node = n;
 	get_color(line, color, &i);
@@ -166,30 +173,42 @@ void 		create_leaf_from_line(t_qt **qt, const char *line, t_le **l)
 	(*qt)->color = MLV_convert_rgba_to_color(c.red, c.green, c.blue, c.alpha);
 }
 
-void 		create_leaf_from_line_nocolor(t_qt **qt, const char *line, t_le **l)
+static void 		create_node_from_line(t_qt **qt, const char *line, t_qt **tab)
 {
-	unsigned int	n;
-	int				i;
-	char			color[16];
 
+	int					i;
+	int					ret;
+	char				n_node[16];
+	char				pos;
+	char				save;
+
+	pos = 0;
 	i = 0;
-	get_leaf(line, color, &i);
-	n = (unsigned int)strtol(color, NULL, 16);
-	*qt = search_node(n, l);
-	if (!*qt)
-	{
-		*qt = create_tree();
-		(*qt)->n_node = n;
-		add_node_to_le(n, l, *qt);
-	}
-	(*qt)->n_node = n;
-	if (line[i] == '0')
-		(*qt)->color = MLV_COLOR_BLACK;
-	else
-		(*qt)->color = MLV_COLOR_WHITE;
+	ret = get_node(line, n_node, &i, &save);
+	pos = save;
+	search_or_create(qt, n_node, tab, 0);
+	if (ret)
+		return ;
+	ret = get_node(line, n_node, &i, &save);
+	search_or_create(qt, n_node, tab, pos);
+	if (ret)
+		return ;
+	pos = save;
+	ret = get_node(line, n_node, &i, &save);
+	search_or_create(qt, n_node, tab, pos);
+	if (ret)
+		return ;
+	pos = save;
+	ret = get_node(line, n_node, &i, &save);
+	search_or_create(qt, n_node, tab, pos);
+	if (ret)
+		return ;
+	pos = save;
+	get_node(line, n_node, &i, &save);
+	search_or_create(qt, n_node, tab, pos);
 }
 
-void 		decode_graph(t_qt **qt, int fd, t_le **l)
+void 		decode_graph(t_qt **qt, int fd, t_qt **tab)
 {
 	char	*line;
 
@@ -197,21 +216,21 @@ void 		decode_graph(t_qt **qt, int fd, t_le **l)
 	if (get_next_line(fd, &line) <= 0)
 		return ;
 	if (strchr(line, ':'))
-		create_node_from_line(qt, line, l);
+		create_node_from_line(qt, line, tab);
 	else
-		create_leaf_from_line(qt, line, l);
+		create_leaf_from_line(qt, line, tab);
 	free(line);
 	if ((*qt)->no)
-		decode_graph(&(*qt)->no, fd, l);
+		decode_graph(&(*qt)->no, fd, tab);
 	if ((*qt)->ne)
-		decode_graph(&(*qt)->ne, fd, l);
+		decode_graph(&(*qt)->ne, fd, tab);
 	if ((*qt)->se)
-		decode_graph(&(*qt)->se, fd, l);
+		decode_graph(&(*qt)->se, fd, tab);
 	if ((*qt)->so)
-		decode_graph(&(*qt)->so, fd, l);
+		decode_graph(&(*qt)->so, fd, tab);
 }
 
-void 		decode_graph_nocolor(t_qt **qt, int fd, t_le **l)
+void 		decode_graph_nocolor(t_qt **qt, int fd, t_qt **tab)
 {
 	char	*line;
 
@@ -219,16 +238,16 @@ void 		decode_graph_nocolor(t_qt **qt, int fd, t_le **l)
 	if (get_next_line(fd, &line) <= 0)
 		return ;
 	if (strchr(line, ':'))
-		create_node_from_line(qt, line, l);
+		create_node_from_line(qt, line, tab);
 	else
-		create_leaf_from_line_nocolor(qt, line, l);
+		create_leaf_from_line_nocolor(qt, line, tab);
 	free(line);
 	if ((*qt)->no)
-		decode_graph(&(*qt)->no, fd, l);
+		decode_graph_nocolor(&(*qt)->no, fd, tab);
 	if ((*qt)->ne)
-		decode_graph(&(*qt)->ne, fd, l);
+		decode_graph_nocolor(&(*qt)->ne, fd, tab);
 	if ((*qt)->se)
-		decode_graph(&(*qt)->se, fd, l);
+		decode_graph_nocolor(&(*qt)->se, fd, tab);
 	if ((*qt)->so)
-		decode_graph(&(*qt)->so, fd, l);
+		decode_graph_nocolor(&(*qt)->so, fd, tab);
 }

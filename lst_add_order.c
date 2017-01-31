@@ -1,4 +1,5 @@
 #include "includes/quadtree.h"
+#include "includes/err.h"
 
 t_lc	*create_list_container(t_list *l_dist)
 {
@@ -95,7 +96,6 @@ int	add_order_any_recur(t_list **l, t_qt *ptr, double dist, t_zone zone)
 			tmp->prev->next = tmp;
 			return (1);
 		}
-		g_nb_op_creation++;
 		tmp = tmp->prev;
 	}
 	return (1);
@@ -165,5 +165,4 @@ void	display_list(t_list *l, t_list *last)
 		if (last->prev)
 			printf("Last prev = %f\n", last->prev->dist);
 	}
-	printf("Nombre de deplacements dans la liste : %d\n", g_nb_op_creation);
 }

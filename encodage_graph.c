@@ -1,6 +1,7 @@
 #include "includes/quadtree.h"
+#include "includes/err.h"
 
-void 		encodage_graph(t_qt *qt, const char *name, int color)
+void 		hub_encode_graph(t_qt *qt, const char *name, int color)
 {
 	FILE 			*fp;
     char 			*filename;

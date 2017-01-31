@@ -1,6 +1,7 @@
 #include "includes/quadtree.h"
+#include "includes/err.h"
 
-t_ldc				*create_list_dist_container(t_ld *l_dist)
+t_ldc			*create_list_dist_container(t_ld *l_dist)
 {
 	t_ldc	*new;
 
@@ -12,7 +13,7 @@ t_ldc				*create_list_dist_container(t_ld *l_dist)
 	return (new);
 }
 
-static t_ld			*create_ld(t_qt **a, t_qt **b, double dist)
+static t_ld		*create_ld(t_qt **a, t_qt **b, double dist)
 {
 	t_ld	*new;
 
@@ -29,7 +30,7 @@ static t_ld			*create_ld(t_qt **a, t_qt **b, double dist)
 	return (NULL);
 }
 
-static int			add_front_recur(t_ld **l, t_qt **a, t_qt **b, double dist)
+static int		add_front_recur(t_ld **l, t_qt **a, t_qt **b, double dist)
 {
 	t_ld	*tmp;
 
@@ -44,7 +45,7 @@ static int			add_front_recur(t_ld **l, t_qt **a, t_qt **b, double dist)
 	return (1);
 }
 
-static int			add_end_recur(t_ld **l, t_qt **a, t_qt **b, double dist)
+static int		add_end_recur(t_ld **l, t_qt **a, t_qt **b, double dist)
 {
 	t_ld	*tmp;
 
@@ -55,10 +56,10 @@ static int			add_end_recur(t_ld **l, t_qt **a, t_qt **b, double dist)
 	return (1);
 }
 
-static int			add_order_any_recur(t_ld **l, t_qt **a, t_qt **b, double dist)
+static int		add_order_any_recur(t_ld **l, t_qt **a, t_qt **b, double dist)
 {
-	t_ld *tmp;
-	t_ld *save;
+	t_ld 	*tmp;
+	t_ld 	*save;
 
 	save = NULL;
 	tmp = *l;
@@ -86,7 +87,7 @@ static int			add_order_any_recur(t_ld **l, t_qt **a, t_qt **b, double dist)
 	return (1);
 }
 
-int					add_order_ld(t_ld **l, t_ld **last, t_qt **a, t_qt **b, double dist)
+int			add_order_ld(t_ld **l, t_ld **last, t_qt **a, t_qt **b, double dist)
 {
 	t_ld	*prev;
 
@@ -110,25 +111,42 @@ int					add_order_ld(t_ld **l, t_ld **last, t_qt **a, t_qt **b, double dist)
 		}
 	}
 	else
-	{
 		add_order_any_recur(last, a, b, dist);
-	}
-	/*else if (dist >= (*l)->dist)
-		return (add_front_recur(l, a, b, dist));
-	else if (*last && dist <= (*last)->dist)
-	{
-		add_end_recur(last, a, b, dist);
-		prev = *last;
-		*last = (*last)->next;
-		(*last)->prev = prev;
-	}*/
-
 	return (1);
 }
 
-void				display_list_dist(t_ld *l)
+void 		delete_list_dist(t_ldc **l)
 {
-	t_ld *tmp;
+	t_ld	*tmp;
+	t_ld	*prev;
+
+	if (!l || !*l)
+		return ;
+	tmp = (*l)->first;
+	if (!tmp)
+	{
+		free((*l));
+		return ;
+	}
+	prev = NULL;
+	while (tmp)
+	{
+		if (prev)
+		{
+			free(prev);
+			prev = NULL;
+		}
+		prev = tmp;
+		tmp = tmp->next;
+	}
+	free(prev);
+	prev = NULL;
+	free(*l);
+}
+
+void		display_list_dist(t_ld *l)
+{
+	t_ld	*tmp;
 	int		i;
 
 	i = 0;
