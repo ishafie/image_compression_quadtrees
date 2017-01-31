@@ -17,14 +17,12 @@ SRC			=		main.c				\
 					quadtree_creation.c	\
 					err.c				\
 					distance.c			\
-					encodage.c			\
-					decodage.c			\
+					encodage_bin.c		\
+					decodage_bin.c		\
 					lst_add_order.c		\
 					minimisation.c		\
-					list_dist.c			\
 					encodage_graph.c	\
 					decodage_graph.c	\
-					list_encoding.c		\
 					get_next_line.c		\
 					img_folder.c		\
 					interface.c			\
@@ -33,6 +31,7 @@ SRC			=		main.c				\
 					check_extension.c	\
 					colorlist.c			\
 					colorlist_action.c	\
+					test.c				\
 
 OBJ_NAME	=		$(SRC:.c=.o)
 OBJ_PATH	=		obj/
