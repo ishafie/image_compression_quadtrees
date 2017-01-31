@@ -2,10 +2,10 @@
 
 ## Installation
 
-Pour installer le projet, extraire l’archive, entrer dans le dossier extrait et lancer la commande :
-```$> make```
+Pour installer le projet, extraire l’archive, entrer dans le dossier extrait et lancer la commande : <br/>
+```$> make```<br/>
 Les commandes make clean, make fclean et make re sont disponibles. (respectivement : supprime les fichiers objets, supprime les fichiers objets et l’executable et supprime les fichiers objets et l’executable et recompile le projet.) Ajoutez les images que vous voulez essayer dans le dossier img puis lancez la commande :
-```$> ./quadtree```
+<br/>```$> ./quadtree```<br/>
 
 ## Utilisation
 
